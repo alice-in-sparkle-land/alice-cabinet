@@ -1,0 +1,1401 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#3B7A4D">
+<title>Japan Trip Dashboard</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%233B7A4D'/%3E%3Ccircle cx='32' cy='30' r='12' fill='%23F4F1E8'/%3E%3Cpath d='M8 50q24-14 48 0v14H8z' fill='%23C6613A'/%3E%3C/svg%3E">
+<style>
+:root{
+  --bg:#EEF2E6; --card:#FBFDF7; --ink:#1F3324; --muted:#62765F; --accent:#3E7B4F; --accent2:#C8643B;
+  --line:#D5E0CC; --soft:#E3EBDA; --good:#3E7B4F; --bad:#B23A2E; --warn:#C8892B;
+  --sky1:#A8D3E0; --sky2:#E3EFCF; --hdr:#1F3324; --hill1:#7FA36B; --hill2:#4F7A4A; --hill3:#2F5135;
+  --serif:"Noto Serif","Noto Serif JP",Georgia,"Times New Roman",serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans","Noto Sans JP",sans-serif;
+  --mono:ui-monospace,"SF Mono","Roboto Mono","Droid Sans Mono",Menlo,Consolas,monospace;
+  --r:16px; color-scheme:light;
+}
+[data-theme="earth"]{--bg:#F3EBDC;--card:#FFFBF3;--ink:#3A2A1E;--muted:#82684F;--accent:#B0532A;--accent2:#C99230;--line:#E4D3B8;--soft:#EDE0C8;--good:#5F7F32;
+  --hill1:#D9B37A;--hill2:#B9844E;--hill3:#7A5233}
+[data-theme="forest"]{--bg:#EDF2E5;--card:#FBFDF7;--ink:#1F3324;--muted:#5F745C;--accent:#3B7A4D;--accent2:#C6613A;--line:#D3DFC9;--soft:#E2EBD7;--good:#3B7A4D;
+  --hill1:#8DB277;--hill2:#4E7D4A;--hill3:#2C4F33}
+[data-theme="sea"]{--bg:#E7F0F2;--card:#F8FCFD;--ink:#12324A;--muted:#58758A;--accent:#1D7898;--accent2:#E0784E;--line:#CCDEE5;--soft:#DCEAEF;--good:#2C8A6A;
+  --hill1:#7CC0D2;--hill2:#3E93B0;--hill3:#1F5F80}
+[data-theme="wind"]{--bg:#ECF0F7;--card:#FBFCFF;--ink:#21304A;--muted:#64708C;--accent:#4569B3;--accent2:#D9A32E;--line:#D6DCEB;--soft:#E2E8F4;--good:#3D8B5E;
+  --hill1:#B5CFA0;--hill2:#86AE78;--hill3:#5E8758}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 var(--sans);-webkit-tap-highlight-color:transparent}
+body{min-height:100vh;padding-bottom:calc(86px + env(safe-area-inset-bottom,0px));
+  background-image:radial-gradient(color-mix(in srgb,var(--ink) 5%,transparent) 1px,transparent 1.2px);background-size:18px 18px}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.wrap{max-width:560px;margin:0 auto;padding:0 14px}
+/* ---------- header sky ---------- */
+.sky{position:relative;overflow:hidden;color:#fff;height:calc(292px + env(safe-area-inset-top,0px));background:var(--sky1);
+  border-bottom-left-radius:28px;border-bottom-right-radius:28px}
+#scn{position:absolute;inset:0}
+#scn .paint{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 100%;display:block}
+#hud{position:relative;z-index:2;padding-top:calc(14px + env(safe-area-inset-top,0px))}
+.hud{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;text-shadow:0 1px 10px rgba(0,20,40,.35),0 1px 2px rgba(0,20,40,.25)}
+.brand{display:flex;gap:10px;align-items:center}
+.brand b{display:block;font:700 19px/1.15 var(--serif);letter-spacing:.005em}
+.brand small{display:block;font:500 12.5px/1.3 var(--sans);opacity:.92;margin-top:2px}
+.seal{flex:none;width:34px;height:34px;border-radius:9px;display:grid;place-items:center;background:#C8452C;color:#FFF4E6;font:700 19px/1 var(--serif);
+  text-shadow:none;box-shadow:inset 0 0 0 2px rgba(255,244,230,.55),0 2px 8px rgba(0,0,0,.18);transform:rotate(-4deg)}
+.hr-right{display:flex;gap:10px;align-items:flex-start}
+.clock{text-align:right}
+.clock b{display:block;font:600 28px/1 var(--sans);font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.clock span{font:500 12px var(--sans);opacity:.92}
+.iconbtn{border:1px solid rgba(255,255,255,.45);background:rgba(255,255,255,.18);
+  width:38px;height:38px;border-radius:12px;display:grid;place-items:center;color:#fff}
+.sheet .iconbtn{border-color:var(--line);background:var(--soft)}
+.iconbtn svg{width:19px;height:19px}
+.hud.light{color:#1E2733;text-shadow:none}
+.hud.light .iconbtn{color:#1E2733;border-color:rgba(30,39,51,.18);background:rgba(255,255,255,.45)}
+.journey{margin-top:-34px;z-index:3;padding:12px 14px 8px}
+.jtop{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.jnow{font:700 18px/1.2 var(--serif)}
+.jsub{font-size:13px;color:var(--muted);margin-top:1px}
+.jco{font-size:10.5px;line-height:1.35;color:var(--muted);text-align:right;padding-top:3px}
+.jtrack{display:block;width:100%;height:auto;margin-top:8px;overflow:visible}
+.jtrack text{font:500 9px var(--sans);fill:var(--muted)}
+.jtrack .jt-past{fill:var(--ink)}
+.jtrack .jt-cur{font-weight:700;font-size:10px;fill:var(--accent2)}
+@media (prefers-reduced-motion:no-preference){
+  .pulse{transform-box:fill-box;transform-origin:center;animation:pulse 2.6s ease-in-out infinite}
+}
+@keyframes pulse{50%{transform:scale(1.35);opacity:.08}}
+@media (prefers-reduced-motion:no-preference){
+  .drift{animation:drift 60s linear infinite}
+  .drift.slow{animation-duration:95s}
+  .bob{animation:bob 6s ease-in-out infinite}
+  .glow{transform-box:fill-box;transform-origin:center;animation:glow 2.4s ease-in-out infinite}
+  .twinkle{animation:tw 3s ease-in-out infinite}
+  .sway{transform-origin:bottom;animation:sway 4s ease-in-out infinite}
+}
+@keyframes drift{from{transform:translateX(-30%)}to{transform:translateX(130%)}}
+@keyframes bob{50%{transform:translateY(-4px)}}
+@keyframes glow{50%{transform:scale(1.4);opacity:.2}}
+@keyframes tw{50%{opacity:.25}}
+@keyframes sway{50%{transform:rotate(4deg)}}
+/* ---------- banners ---------- */
+.banner{margin:12px 0 0;padding:10px 12px;border-radius:12px;font-size:13.5px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;border:1px dashed}
+.banner.preview{background:color-mix(in srgb,var(--accent2) 14%,var(--card));border-color:var(--accent2)}
+.banner.manual{background:color-mix(in srgb,var(--accent) 10%,var(--card));border-color:var(--accent)}
+.banner.err{background:#fde8e5;border-color:var(--bad);color:#6d1d14}
+.banner.backup{background:var(--card);border-color:var(--line)}
+.banner b{font-family:var(--mono)}
+.banner .sp{flex:1}
+.chipbtn{border:1px solid var(--line);background:var(--card);border-radius:99px;padding:6px 11px;font-size:13px;font-weight:600;white-space:nowrap}
+.chipbtn.solid{background:var(--accent);border-color:var(--accent);color:#fff}
+/* ---------- cards ---------- */
+h2.sec{font:700 13px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:22px 2px 8px;display:flex;align-items:center;gap:8px}
+h2.sec::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,var(--line),transparent)}
+.card{position:relative;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px;box-shadow:0 1px 0 color-mix(in srgb,var(--ink) 4%,transparent),0 8px 24px -16px color-mix(in srgb,var(--ink) 30%,transparent)}
+.card + .card{margin-top:10px}
+.hudcard::before,.hudcard::after{content:"";position:absolute;width:14px;height:14px;border:2px solid var(--accent);pointer-events:none}
+.hudcard::before{top:-1px;left:-1px;border-right:0;border-bottom:0;border-top-left-radius:var(--r)}
+.hudcard::after{bottom:-1px;right:-1px;border-left:0;border-top:0;border-bottom-right-radius:var(--r)}
+.tag{display:inline-flex;align-items:center;gap:6px;font:700 11px var(--mono);letter-spacing:.14em;text-transform:uppercase}
+.tag .dot{width:8px;height:8px;border-radius:50%;background:var(--accent)}
+.now .tag{color:var(--accent)}
+.now .tag .dot{box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 22%,transparent)}
+.next .tag{color:var(--accent2)}
+.next .tag .dot{background:var(--accent2)}
+.steptitle{font:700 20px/1.25 var(--serif);margin:8px 0 4px}
+.next .steptitle{font-size:18px}
+.place{display:flex;gap:6px;align-items:center;color:var(--muted);font-size:13.5px}
+.place svg{width:15px;height:15px;flex:none;color:var(--accent)}
+.detail{margin:8px 0 0;font-size:14.5px}
+.meta{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.meta .t{font:600 15px var(--mono)}
+.meta .rel{font:500 12.5px var(--mono);color:var(--muted)}
+.count{font:700 26px/1 var(--mono);color:var(--accent2);letter-spacing:-.02em}
+.count small{font-size:12px;font-weight:500;color:var(--muted);margin-left:4px}
+.prog{height:4px;border-radius:4px;background:var(--soft);margin:12px 0 2px;overflow:hidden;position:relative}
+.prog i{position:absolute;inset:0 auto 0 0;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:4px}
+.checks{list-style:none;margin:10px 0 0;padding:0;display:grid;gap:6px}
+.checks label{display:flex;gap:10px;align-items:flex-start;padding:7px 9px;border-radius:10px;background:var(--soft);font-size:14px;cursor:pointer}
+.checks input{appearance:none;flex:none;width:20px;height:20px;border:2px solid var(--muted);border-radius:6px;margin:0;display:grid;place-items:center;background:var(--card)}
+.checks input:checked{background:var(--accent);border-color:var(--accent)}
+.checks input:checked::after{content:"";width:5px;height:10px;border:solid #fff;border-width:0 2px 2px 0;transform:translateY(-1px) rotate(45deg)}
+.checks input:checked + span{text-decoration:line-through;color:var(--muted)}
+.row2{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.btn{border:1px solid var(--line);background:var(--card);border-radius:12px;padding:10px 14px;font-weight:600;font-size:14px;display:inline-flex;align-items:center;gap:6px;justify-content:center}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.ghost{background:transparent}
+.btn.danger{color:var(--bad);border-color:color-mix(in srgb,var(--bad) 40%,var(--line))}
+.btn.wide{flex:1}
+.btn svg{width:17px;height:17px}
+.later{display:grid;gap:0;margin-top:2px}
+.later .li{display:grid;grid-template-columns:52px 22px 1fr;gap:6px;align-items:center;padding:9px 2px;border-top:1px dashed var(--line);font-size:14px}
+.later .li:first-child{border-top:0}
+.later .li .t{font:600 13px var(--mono);color:var(--muted)}
+.ico{width:20px;height:20px;color:var(--accent)}
+.ico.k-flight{color:#5773c4}.ico.k-train{color:var(--accent)}.ico.k-eat{color:var(--accent2)}.ico.k-see{color:#b0443a}
+.ico.k-stay{color:#7a5aa8}.ico.k-test{color:#c08a1e}.ico.k-shop{color:#c2508a}.ico.k-task{color:var(--muted)}
+/* ---------- money ring ---------- */
+.ringrow{display:flex;gap:14px;align-items:center}
+.ring{flex:none;width:96px;height:96px;position:relative}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring .c{position:absolute;inset:0;display:grid;place-items:center;text-align:center;line-height:1.1}
+.ring .c b{font:700 17px var(--mono)}
+.ring .c small{font:500 10px var(--mono);color:var(--muted);letter-spacing:.08em}
+.big{font:700 22px/1.15 var(--mono);letter-spacing:-.02em}
+.big small{font-size:13px;color:var(--muted);font-weight:500}
+.sub{color:var(--muted);font-size:13px}
+.ok{color:var(--good)} .over{color:var(--bad)}
+.cats{display:grid;gap:7px;margin-top:12px}
+.cat{display:grid;grid-template-columns:74px 1fr auto;gap:8px;align-items:center;font-size:12.5px}
+.cat .bar{height:8px;background:var(--soft);border-radius:8px;overflow:hidden}
+.cat .bar i{display:block;height:100%;border-radius:8px;background:var(--accent)}
+.cat .bar i.over{background:var(--bad)}
+.cat .v{font:500 12px var(--mono);text-align:right;color:var(--muted);white-space:nowrap}
+.stack{height:14px;border-radius:8px;overflow:hidden;display:flex;background:var(--soft);margin:10px 0 6px}
+.stack i{display:block;height:100%}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;color:var(--muted)}
+.legend span::before{content:"";display:inline-block;width:9px;height:9px;border-radius:3px;margin-right:5px;background:var(--c)}
+table.days{width:100%;border-collapse:collapse;font-size:13px}
+table.days td{padding:8px 4px;border-top:1px dashed var(--line);vertical-align:middle}
+table.days td.n{font:500 12.5px var(--mono);text-align:right;white-space:nowrap}
+table.days tr.today td{background:color-mix(in srgb,var(--accent) 8%,transparent)}
+.minibar{height:6px;background:var(--soft);border-radius:6px;overflow:hidden;min-width:50px}
+.minibar i{display:block;height:100%;background:var(--accent)}
+.minibar i.over{background:var(--bad)}
+.exp{display:grid;grid-template-columns:28px 1fr auto;gap:10px;align-items:center;padding:10px 2px;border-top:1px dashed var(--line);cursor:pointer}
+.exp:first-child{border-top:0}
+.exp .em{width:28px;height:28px;border-radius:9px;display:grid;place-items:center;background:var(--soft)}
+.exp .em svg{width:16px;height:16px}
+.exp .a{font:600 14px var(--mono);text-align:right}
+.exp .a small{display:block;font-size:11px;color:var(--muted);font-weight:500}
+.exp .nt{font-size:14px}
+.exp .nt small{display:block;color:var(--muted);font-size:12px}
+.empty{color:var(--muted);font-size:14px;padding:6px 2px}
+/* ---------- day view ---------- */
+.daychips{display:flex;gap:8px;overflow-x:auto;padding:4px 2px 8px;margin:14px -14px 0;padding-left:14px;padding-right:14px;scrollbar-width:none}
+.daychips::-webkit-scrollbar{display:none}
+.dchip{flex:none;border:1px solid var(--line);background:var(--card);border-radius:14px;padding:7px 10px;text-align:center;min-width:58px}
+.dchip b{display:block;font:700 15px var(--mono)}
+.dchip small{font:600 10.5px var(--mono);color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+.dchip.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.dchip.on small{color:#fff;opacity:.85}
+.dchip.past{opacity:.6}
+.dayhead{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.dayhead h3{margin:0;font:700 20px/1.2 var(--serif)}
+.tl{position:relative;margin-top:12px}
+.tl::before{content:"";position:absolute;left:58px;top:6px;bottom:6px;width:2px;background:var(--line)}
+.st{position:relative;display:grid;grid-template-columns:48px 22px 1fr;gap:8px;padding:9px 4px;border-radius:12px;cursor:pointer;align-items:start}
+.st .t{font:600 13px var(--mono);color:var(--muted);padding-top:2px;text-align:right}
+.st .nd{width:14px;height:14px;border-radius:50%;margin:3px 0 0 3px;background:var(--card);border:2px solid var(--line);position:relative;z-index:1}
+.st .bd b{display:block;font-size:14.5px;font-weight:600}
+.st .bd span{display:block;font-size:12.5px;color:var(--muted)}
+.st.done .nd{background:var(--accent);border-color:var(--accent)}
+.st.done .bd{opacity:.6}
+.st.cur{background:color-mix(in srgb,var(--accent) 10%,transparent)}
+.st.cur .nd{background:var(--accent2);border-color:var(--accent2);box-shadow:0 0 0 5px color-mix(in srgb,var(--accent2) 25%,transparent)}
+.st.opt .bd b::after{content:"optional";margin-left:6px;font:600 10px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--accent2);border:1px solid;border-radius:6px;padding:0 4px;vertical-align:2px}
+.st .edited{font:600 10px var(--mono);color:var(--accent);margin-left:4px}
+.st.hid{opacity:.45}
+.st.hid .bd b{text-decoration:line-through}
+.zoneflag{font:600 10px var(--mono);color:var(--accent2);margin-left:4px}
+/* ---------- info ---------- */
+.kv{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:14px;margin-top:8px}
+.kv dt{color:var(--muted);font-size:12.5px;padding-top:1px}
+.kv dd{margin:0}
+.kv a,.lnk{color:var(--accent);font-weight:600;text-decoration:none}
+.ja{font-size:17px;font-weight:600;margin-top:6px}
+.list{margin:6px 0 0;padding-left:18px;font-size:14px}
+.list li{margin:4px 0}
+.taxi{position:fixed;inset:0;z-index:60;background:#fff;color:#111;display:flex;flex-direction:column;justify-content:center;padding:28px;text-align:center}
+.taxi .j{font:800 clamp(28px,9vw,44px)/1.35 var(--sans)}
+.taxi .e{margin-top:18px;font-size:16px;color:#444}
+.taxi .h{font-size:15px;color:#666;margin-bottom:18px}
+/* ---------- tabs ---------- */
+.tabs{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--card);box-shadow:0 -6px 18px -12px color-mix(in srgb,var(--ink) 40%,transparent);
+  border-top:1px solid var(--line);padding:6px 10px calc(6px + env(safe-area-inset-bottom,0px));display:flex;gap:4px;justify-content:center}
+.tabs .in{display:flex;gap:2px;max-width:560px;flex:1;align-items:center}
+.tab{flex:1;border:0;background:transparent;padding:6px 0;border-radius:12px;display:flex;flex-direction:column;align-items:center;gap:2px;color:var(--muted);font:600 11px var(--sans)}
+.tab svg{width:22px;height:22px}
+.tab.on{color:var(--accent);background:var(--soft)}
+.fab{flex:none;width:54px;height:54px;border-radius:18px;border:0;background:var(--accent2);color:#fff;display:grid;place-items:center;margin:-22px 4px 0;box-shadow:0 8px 20px -8px var(--accent2)}
+.fab svg{width:26px;height:26px}
+/* ---------- sheet ---------- */
+.scrim{position:fixed;inset:0;z-index:40;background:rgba(10,20,15,.35);opacity:0;pointer-events:none;transition:opacity .2s}
+.scrim.on{opacity:1;pointer-events:auto}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:50;max-height:92vh;overflow:auto;background:var(--card);border-radius:22px 22px 0 0;
+  padding:8px 16px calc(18px + env(safe-area-inset-bottom,0px));transform:translateY(105%);transition:transform .25s ease;max-width:600px;margin:0 auto;
+  box-shadow:0 -10px 40px -10px rgba(0,0,0,.3)}
+.sheet.on{transform:none}
+.sheet .grab{width:44px;height:5px;border-radius:5px;background:var(--line);margin:4px auto 10px}
+.sheet h3{margin:0 0 12px;font:700 19px var(--serif);display:flex;justify-content:space-between;align-items:center}
+.f{display:grid;gap:5px;margin-bottom:12px}
+.f > span{font:600 11.5px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.inp{width:100%;border:1px solid var(--line);background:var(--bg);border-radius:12px;padding:11px 12px;font-size:16px}
+.inp:focus{outline:2px solid var(--accent);outline-offset:0;border-color:transparent}
+textarea.inp{min-height:84px;resize:vertical}
+.amount{font:700 30px var(--mono);text-align:center;padding:12px}
+.seg{display:flex;gap:6px;flex-wrap:wrap}
+.seg button{flex:1;min-width:64px;border:1px solid var(--line);background:var(--bg);border-radius:11px;padding:9px 6px;font-weight:600;font-size:14px;display:flex;align-items:center;justify-content:center;gap:5px}
+.seg button svg{width:16px;height:16px}
+.seg button.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.conv{font:500 13px var(--mono);color:var(--muted);text-align:center;margin-top:-4px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.toast{position:fixed;left:50%;bottom:calc(96px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:70;background:var(--ink);color:var(--card);
+  padding:10px 16px;border-radius:12px;font-size:14px;max-width:88vw;text-align:center;box-shadow:0 8px 20px -8px rgba(0,0,0,.5)}
+.small{font-size:12.5px;color:var(--muted)}
+.hr{height:1px;background:var(--line);margin:14px 0}
+.pre{white-space:pre-wrap}
+.tiny{font:500 11px var(--mono);color:var(--muted);letter-spacing:.04em}
+.foot{margin:26px 0 8px;text-align:center}
+:focus-visible{outline:2px solid var(--accent2);outline-offset:2px}
+
+.lite *,.lite *::before,.lite *::after{animation:none!important;transition:none!important}
+.paused *{animation-play-state:paused!important}
+
+</style>
+</head>
+<body>
+<header class="sky" id="hdr"></header>
+<main class="wrap" id="app"></main>
+<nav class="tabs" id="tabs" aria-label="Sections"></nav>
+<div class="scrim" id="scrim"></div>
+<section class="sheet" id="sheet" role="dialog" aria-modal="true"></section>
+<script>
+"use strict";
+/* ===== TRIP DATA (from "Japan trip planner") ===== */
+const YEAR = 2026;
+const ZONES = {7:'ICT · Saigon', 8:'CST · Shanghai', 9:'JST · Japan'};
+const ZONE_SHORT = {7:'ICT', 8:'CST', 9:'JST'};
+const ZONE_CUR = {7:'VND', 8:'CNY', 9:'JPY'};
+
+/* route stops (base camps) */
+const STOPS = [
+  {n:'Saigon'}, {n:'Shanghai'}, {n:'Osaka'}, {n:'Azuchi'},
+  {n:'Nagahama'}, {n:'Nagoya'}, {n:'Osaka'}, {n:'Home'}
+];
+/* cities for the header readout */
+const CITIES = {
+  SGN:{n:'Saigon', lat:10.82, lon:106.66}, AIR:{n:'In the air', lat:null, lon:null},
+  PVG:{n:'Pudong Airport', lat:31.14, lon:121.81}, SHA:{n:'Shanghai', lat:31.24, lon:121.49},
+  KIX:{n:'Kansai Airport', lat:34.43, lon:135.23}, OSA:{n:'Osaka', lat:34.69, lon:135.50},
+  NARA:{n:'Nara', lat:34.68, lon:135.84}, KYO:{n:'Kyoto', lat:35.01, lon:135.77},
+  AZU:{n:'Azuchi', lat:35.14, lon:136.14}, NAG:{n:'Nagahama', lat:35.38, lon:136.27},
+  NGY:{n:'Nagoya', lat:35.17, lon:136.88}
+};
+
+const DAYS = [
+  {d:'11-05', w:'Thu', label:'Depart',            cur:'VND', z:7, hotel:'On the plane',
+   b:{food:0, transport:200000, entry:0, other:0}},
+  {d:'11-06', w:'Fri', label:'Shanghai → Osaka',  cur:'JPY', z:9, hotel:'Welina Hotel Premier Nakanoshima EAST',
+   b:{food:2760, transport:3560, entry:0, other:3530}},
+  {d:'11-07', w:'Sat', label:'HSK4 day',          cur:'JPY', z:9, hotel:'Welina Hotel Premier Nakanoshima EAST',
+   b:{food:3500, transport:1000, entry:1000, other:0}},
+  {d:'11-08', w:'Sun', label:'Osaka',             cur:'JPY', z:9, hotel:'Welina Hotel Premier Nakanoshima EAST',
+   b:{food:3500, transport:1000, entry:1800, other:0}},
+  {d:'11-09', w:'Mon', label:'Nara + Inari',      cur:'JPY', z:9, hotel:'Welina Hotel Premier Nakanoshima EAST',
+   b:{food:3500, transport:2200, entry:1300, other:0}},
+  {d:'11-10', w:'Tue', label:'Kyoto history',     cur:'JPY', z:9, hotel:'Welina Hotel Premier Nakanoshima EAST',
+   b:{food:3500, transport:2000, entry:3000, other:0}},
+  {d:'11-11', w:'Wed', label:'Azuchi · Nagahama', cur:'JPY', z:9, hotel:'Hotel Livemax Meieki (Nagoya)',
+   b:{food:3500, transport:4100, entry:2500, other:2000}},
+  {d:'11-12', w:'Thu', label:'Nagoya · Taiko',    cur:'JPY', z:9, hotel:'Ark Hotel Osaka Shinsaibashi',
+   b:{food:3500, transport:4200, entry:800, other:0}},
+  {d:'11-13', w:'Fri', label:'Kimono day',        cur:'JPY', z:9, hotel:'Ark Hotel Osaka Shinsaibashi',
+   b:{food:3500, transport:1400, entry:1200, other:15000}},
+  {d:'11-14', w:'Sat', label:'Fly home',          cur:'JPY', z:9, hotel:'Home',
+   b:{food:2500, transport:2400, entry:0, other:0}}
+];
+const BUDGET_NOTES = {
+  '11-06':'Shanghai part ≈ 1.2M VND (Aerotel ~600k, food, Maglev/Metro) + Japan: ICOCA, Nankai, konbini dinner',
+  '11-11':'Other = takkyūbin suitcase to Ark (~¥2,000). Entry includes bike rental',
+  '11-12':'Transport assumes highway bus; Kintetsu (¥4,990) would add ~¥2,500',
+  '11-13':'Other = kimono + photoshoot (~¥15,000). Shopping is tracked separately',
+  '11-14':'Includes PVG airside snack and Grab home'
+};
+
+const PREPAID_DEFAULT = [
+  {id:'p1', n:'Flights (Juneyao, Agoda)', a:9709000, c:'VND'},
+  {id:'p2', n:'Welina EAST · 5 nights', a:6950000, c:'VND'},
+  {id:'p3', n:'Livemax Meieki · 1 night', a:900000, c:'VND'},
+  {id:'p4', n:'Ark Shinsaibashi · 2 nights', a:2300000, c:'VND'},
+  {id:'p5', n:'HSK4 fee', a:7920, c:'JPY'},
+  {id:'p6', n:'PVI travel insurance', a:239650, c:'VND'},
+  {id:'p7', n:'Chubb flight protection', a:338000, c:'VND'},
+  {id:'p8', n:'eSIM (estimate)', a:450000, c:'VND'}
+];
+
+/* kind: flight | train | see | eat | stay | task | test | shop
+   [day, time, zone, stop, city, kind, place, title, detail, checklist[], optional] */
+const RAW_STEPS = [
+ ['11-05','18:00',7,0,'SGN','task','Home','Final check before leaving','Pack the essentials. Everything for Shanghai fits in a 5 kg cabin bag.',
+   ['Passport + Japan visa','HSK admission ticket (paper + phone)','Yen ¥20–30k + some CNY','eSIM installed','Alipay linked to card','Charger + power bank']],
+ ['11-05','21:00',7,0,'SGN','train','Home → Tân Sơn Nhất','Grab to the airport','Aim to be at the Juneyao counter by 22:00.',['Grab booked']],
+ ['11-05','22:00',7,0,'SGN','task','Tân Sơn Nhất · Juneyao counter','Check in HO1328','Tell staff you will use China’s visa-free transit in Shanghai. Confirm bags are checked through to KIX.',
+   ['Bag tag says KIX','Boarding passes for HO1328 + HO1337?']],
+ ['11-05','23:30',7,0,'SGN','task','Tân Sơn Nhất','Immigration → gate','Boarding ~23:45. Departure 00:25.'],
+
+ ['11-06','00:25',7,1,'AIR','flight','SGN → PVG','HO1328 to Shanghai · sleep','Airbus A320, 4h05. Lands 05:30 Shanghai time (+1 h).'],
+ ['11-06','05:30',8,1,'PVG','task','Pudong T2','Land · visa-free transit channel','Follow the visa-free transit signs. Show passport + onward ticket to Osaka. Allow 45–60 min.',
+   ['Onward e-ticket ready on phone']],
+ ['11-06','06:45',8,1,'PVG','train','PVG → Longyang Rd → East Nanjing Rd','Maglev + Metro line 2','Freshen up in the airport toilet first. ~45 min in total. Pay with Alipay.'],
+ ['11-06','07:30',8,1,'SHA','see','The Bund','The Bund in morning light','Walk the riverside promenade while it is quiet.'],
+ ['11-06','08:30',8,1,'SHA','eat','Near Yu Garden','Breakfast: xiaolongbao / shengjian bao','Nanxiang Mantou Dian is the classic stop.'],
+ ['11-06','09:00',8,1,'SHA','see','Yu Garden + Old Town','Yu Garden (opens ~9:00)','Then wander the Old Town lanes.'],
+ ['11-06','11:00',8,1,'SHA','see','Nanjing Road','Nanjing Road walk','Pedestrian street toward East Nanjing Rd station.'],
+ ['11-06','12:00',8,1,'SHA','train','East Nanjing Rd → PVG','Metro line 2 back to Pudong','~1 h, or Line 2 to Longyang Rd + Maglev. Be at T2 by ~13:00.'],
+ ['11-06','13:00',8,1,'PVG','stay','Aerotel Shanghai · T2 landside, 6F','Shower + 2-hour nap','Set an alarm before you sleep.',['Alarm 14:50']],
+ ['11-06','15:00',8,1,'PVG','task','Pudong T2','Check in HO1337 · exit immigration','Security and exit immigration, then rest at the gate.'],
+ ['11-06','17:50',8,2,'AIR','flight','PVG → KIX','HO1337 to Osaka','Boeing 787-9, 2h05. Lands 20:55 Japan time (+1 h).'],
+ ['11-06','20:55',9,2,'KIX','task','Kansai Airport T1','Land · immigration + customs','Collect bags. Allow ~45 min.'],
+ ['11-06','21:40',9,2,'KIX','task','Kansai Airport station','Get your ICOCA','No JR Pass needed — your plan uses ICOCA single fares. Buy an ICOCA at the JR ticket machines (¥2,000 incl. ¥500 deposit) or top up, then go to the Nankai gates.',
+   ['ICOCA bought / topped up (≥ ¥3,000)']],
+ ['11-06','21:55',9,2,'KIX','train','Nankai line','Nankai KIX → Namba (~45 min)','Take the Airport Express (cheaper than rapi:t). Tap ICOCA.'],
+ ['11-06','22:45',9,2,'OSA','train','Namba → Higobashi','Yotsubashi line, 4 stops','~5 min ride, then ~5 min walk to the hotel.'],
+ ['11-06','23:00',9,2,'OSA','stay','Welina Hotel Premier Nakanoshima EAST','Check in · sleep early','HSK4 tomorrow. Grab konbini onigiri or oden on the way.',
+   ['Admission ticket + passport laid out','Alarm 07:30']],
+
+ ['11-07','07:30',9,2,'OSA','eat','Hotel / Matsuya Higobashi','Wake up · breakfast','Konbini or a Matsuya set.'],
+ ['11-07','08:15',9,2,'OSA','train','Yodoyabashi → Tennōji','Midōsuji line to Tennōji','Walk to Yodoyabashi (~7 min), then ~15 min, no change.'],
+ ['11-07','08:50',9,2,'OSA','test','日中文化芸術専門学校 天王寺','HSK4 reception','Admission ticket + passport. Name must match.',['Admission ticket','Passport','Phone off']],
+ ['11-07','09:30',9,2,'OSA','test','Tennōji venue','HSK4 exam · until ~11:30','Pinyin typing (Sogou). 加油!'],
+ ['11-07','11:45',9,2,'OSA','eat','Tennōji','Lunch near Tennōji','You earned it.'],
+ ['11-07','13:00',9,2,'OSA','see','Shitennō-ji','Shitennō-ji or Abeno Harukas','Japan’s oldest state temple, 10 min walk. Or the Abeno Harukas observatory.'],
+ ['11-07','15:00',9,2,'OSA','stay','Welina','Back to hotel · nap',''],
+ ['11-07','18:00',9,2,'OSA','eat','Dōtonbori','Celebrate in Dōtonbori','Takoyaki + okonomiyaki · Hōzen-ji Yokochō lantern alley. Yotsubashi line Higobashi → Namba.'],
+ ['11-07','21:30',9,2,'OSA','stay','Welina','Back to hotel',''],
+
+ ['11-08','08:15',9,2,'OSA','train','Tanimachi 4-chōme','To Osaka Castle','Tanimachi line to Tanimachi 4-chōme.'],
+ ['11-08','09:00',9,2,'OSA','see','Osaka Castle','Osaka Castle Main Tower','Opens 9:00 — go early with a skip-the-line ticket.'],
+ ['11-08','10:45',9,2,'OSA','see','Nishinomaru Garden','Nishinomaru Garden','Castle views across the lawn.'],
+ ['11-08','12:00',9,2,'OSA','see','Osaka Museum of History','Osaka Museum of History','Castle view from the top floor.'],
+ ['11-08','14:00',9,2,'OSA','eat','Kuromon Market','Late lunch at Kuromon Market','Sakaisuji/Sennichimae line to Nippombashi. Stalls close ~17:00.'],
+ ['11-08','16:30',9,2,'OSA','see','Namba → Shinsaibashi-suji','Shopping street walk','Window shopping only — real shopping is Fri 13.'],
+ ['11-08','18:30',9,2,'OSA','eat','Shinsekai','Kushikatsu under Tsūtenkaku','No double-dipping in the sauce.'],
+ ['11-08','21:00',9,2,'OSA','stay','Welina','Back to hotel','Midōsuji line Dōbutsuen-mae → Yodoyabashi.'],
+
+ ['11-09','07:45',9,2,'OSA','train','Higobashi → Namba → Kintetsu Nara','To Nara (~1 h)','Yotsubashi line to Namba, then Kintetsu Nara line (~40 min).'],
+ ['11-09','09:00',9,2,'NARA','see','Nara Park','Nara Park deer','Bow to the deer. Shika senbei ~¥200.'],
+ ['11-09','10:00',9,2,'NARA','see','Tōdai-ji','Tōdai-ji Great Buddha',''],
+ ['11-09','11:30',9,2,'NARA','see','Kasuga Taisha','Kasuga Taisha lantern paths',''],
+ ['11-09','12:30',9,2,'NARA','eat','Near Kintetsu Nara','Lunch: kakinoha-zushi or udon',''],
+ ['11-09','13:30',9,2,'NARA','train','JR Nara → Inari','JR Nara line to Inari (~45 min)','JR Nara station is ~15 min walk from Kintetsu Nara. ICOCA OK.'],
+ ['11-09','14:30',9,2,'KYO','see','Fushimi Inari Taisha','Fushimi Inari torii gates','Kitsune udon + inari sushi near the gate. Climb as far as you like.'],
+ ['11-09','17:30',9,2,'KYO','train','Fushimi-Inari → Yodoyabashi','Keihan back to Osaka (~45 min)',''],
+ ['11-09','18:30',9,2,'OSA','stay','Welina','Dinner nearby · early night','Tomorrow you leave at 06:15.',['Alarm 05:45']],
+
+ ['11-10','06:15',9,2,'OSA','train','Umeda → Arashiyama','Hankyu to Arashiyama (~1 h)','Midōsuji line to Umeda, Hankyu Kyoto line, change at Katsura. Konbini breakfast.'],
+ ['11-10','07:30',9,2,'KYO','see','Arashiyama Bamboo Grove','Bamboo Grove before the crowds',''],
+ ['11-10','08:30',9,2,'KYO','see','Tenryū-ji','Tenryū-ji garden · Togetsukyō Bridge',''],
+ ['11-10','10:00',9,2,'KYO','see','Nijō Castle','Optional: Nijō Castle (~1.5 h)','JR Sagano line to Nijō. Skip if behind; then Tōzai line toward Honnō-ji.',null,true],
+ ['11-10','12:00',9,2,'KYO','see','Honnō-ji','Honnō-ji + Treasure Hall','Plus the original Honnō-ji site marker. From Arashiyama: Hankyu to Kawaramachi.'],
+ ['11-10','13:00',9,2,'KYO','eat','Nishiki Market','Lunch grazing at Nishiki Market',''],
+ ['11-10','14:30',9,2,'KYO','see','Toyokuni Shrine','Toyokuni Shrine · Hōkō-ji bell · Mimizuka','Keihan Gion-Shijō → Shichijō, then walk.'],
+ ['11-10','15:45',9,2,'KYO','see','Sanjūsangen-dō','Sanjūsangen-dō + Taikō wall','Last entry ~16:30. Optional: Kyoto National Museum (closes 17:00).'],
+ ['11-10','17:00',9,2,'KYO','eat','Near Shijō','Dinner: ramen or gyūdon',''],
+ ['11-10','19:00',9,2,'OSA','train','Shichijō → Yodoyabashi','Keihan back to Osaka','Tonight: pack the suitcase for tomorrow’s takkyūbin.',['Suitcase packed','Day bag for 2 days ready']],
+
+ ['11-11','07:30',9,2,'OSA','task','Welina front desk','Send suitcase to Ark · check out','Takkyūbin to Ark Hotel Osaka Shinsaibashi, delivery 12 Nov (~¥2,000).',['Ark address on the slip','Delivery date: 12 Nov','Photo of the receipt']],
+ ['11-11','08:00',9,3,'OSA','train','JR Osaka → Azuchi','JR to Azuchi (~1h30)','Special Rapids skip Azuchi — change to a local (check the board). ICOCA OK.'],
+ ['11-11','09:30',9,3,'AZU','see','Azuchi station','Rent a bike · Nobunaga no Yakata','Then the Azuchi Castle Archaeological Museum.',['Bike rented']],
+ ['11-11','11:00',9,3,'AZU','see','Azuchi Castle ruins','Azuchi Castle ruins','Steep stone steps, ~1 h. Skip if behind schedule.'],
+ ['11-11','12:30',9,4,'AZU','train','Azuchi → Nagahama','JR local to Nagahama (~40 min)','Return the bike first. ICOCA still works on this stretch.'],
+ ['11-11','13:15',9,4,'NAG','eat','Nagahama','Lunch: yakisaba sōmen','Local grilled-mackerel noodles.'],
+ ['11-11','14:00',9,4,'NAG','see','Nagahama Castle','Nagahama Castle museum + drama hall','Museum closes ~17:00.'],
+ ['11-11','16:00',9,4,'NAG','see','Kurokabe Square','Kurokabe Square stroll',''],
+ ['11-11','17:30',9,5,'NAG','train','Nagahama → Nagoya','Buy a PAPER ticket (~¥1,500)','IC cards can’t cross Maibara. Local via Maibara + Ōgaki, ~1h30.',['Paper ticket bought']],
+ ['11-11','19:15',9,5,'NGY','stay','Hotel Livemax Meieki','Check in (closes 22:30)','~6–10 min walk south of Nagoya Station.'],
+ ['11-11','20:00',9,5,'NGY','eat','Furaibō Meieki','Tebasaki wings at Furaibō','2 min from the hotel.'],
+
+ ['11-12','08:00',9,5,'NGY','eat','Komeda’s Coffee Meieki','Komeda morning set · check out','Leave your bag at the front desk or a station locker.',['Bag stored']],
+ ['11-12','09:15',9,5,'NGY','train','Nagoya → Nakamura Kōen','Higashiyama line (~5 min)',''],
+ ['11-12','09:30',9,5,'NGY','see','Nakamura Park','Hideyoshi’s birthplace','Hideyoshi & Kiyomasa Memorial Museum · Toyotomi Museum · Toyokuni Shrine.'],
+ ['11-12','12:00',9,5,'NGY','eat','Nagoya','Lunch: kishimen or miso nikomi udon',''],
+ ['11-12','13:30',9,5,'NGY','see','Kiyosu Castle','Kiyosu Castle','JR Nagoya → Kiyosu (~10 min) + walk. Where Hideyoshi served Nobunaga.'],
+ ['11-12','15:30',9,6,'NGY','train','Nagoya Station','Pick up bag · head to Osaka','Highway bus to Namba (~¥1,700–2,800, ~3.5 h) or Kintetsu ltd. express to Ōsaka-Nippombashi (¥4,990, ~2h10).',['Bag collected','Ticket bought']],
+ ['11-12','19:00',9,6,'OSA','stay','Ark Hotel Osaka Shinsaibashi','Check in · suitcase waiting','Nippombashi → Nagahoribashi 1 stop, Exit 4. Light dinner nearby.',['Suitcase received']],
+
+ ['11-13','07:45',9,6,'OSA','train','Nagahoribashi → Kitahama → Gion-Shijō','To Gion (~1 h)','Sakaisuji line to Kitahama, Keihan to Gion-Shijō (~50 min).'],
+ ['11-13','09:00',9,6,'KYO','task','Higashiyama kimono shop','Kimono rental + photoshoot','Earliest slot.',['Booking confirmation','Phone charged']],
+ ['11-13','10:30',9,6,'KYO','see','Kiyomizu-dera','Kiyomizu-dera · Sannenzaka · Ninenzaka',''],
+ ['11-13','12:30',9,6,'KYO','eat','Yasaka Pagoda','Yasaka Pagoda · lunch',''],
+ ['11-13','14:00',9,6,'KYO','see','Kōdai-ji','Kōdai-ji (Nene’s temple) · Ishibe-kōji','Plus the Kōdai-ji Sho Museum.'],
+ ['11-13','16:00',9,6,'KYO','see','Yasaka Shrine','Yasaka Shrine',''],
+ ['11-13','17:00',9,6,'KYO','task','Kimono shop','Return the kimono',''],
+ ['11-13','17:30',9,6,'KYO','train','Gion-Shijō → Kitahama','Keihan back to Osaka',''],
+ ['11-13','19:00',9,6,'OSA','shop','Shinsaibashi','GU + Uniqlo (open till 21:00)','Bring passport. Refund needs ¥5,000+ per store per day — claimed at KIX. Keep goods sealed.',['Passport with you','Receipts kept','Goods unopened']],
+ ['11-13','20:45',9,6,'OSA','eat','Dōtonbori','Dinner · then pack','Tax-free goods go in your carry-on.',['Packed','Tax-free goods in carry-on']],
+
+ ['11-14','08:30',9,6,'OSA','stay','Ark Hotel','Breakfast · check out',''],
+ ['11-14','09:45',9,6,'OSA','train','Nagahoribashi → Tengachaya → KIX','Sakaisuji line + Nankai to KIX','~10 min + ~35 min.'],
+ ['11-14','10:45',9,6,'KIX','task','KIX departures','Tax refund kiosk BEFORE check-in','Passport, receipts, goods in carry-on.',['Refund done']],
+ ['11-14','11:30',9,6,'KIX','task','Juneyao counter','Check in HO1506 · immigration','Ask: are bags checked through to SGN?',['Bag tag says SGN']],
+ ['11-14','13:45',9,7,'AIR','flight','KIX → PVG','HO1506 to Shanghai','Lands 15:15 Shanghai time.'],
+ ['11-14','15:15',8,7,'PVG','task','Pudong airside','Transfer · stay airside (4h40)','Follow International Transfer signs. No need to enter China.'],
+ ['11-14','19:55',8,7,'AIR','flight','PVG → SGN','HO1327 home','Lands 23:25 Saigon time.'],
+ ['11-14','23:25',7,7,'SGN','stay','Tân Sơn Nhất','Home · おかえり','Grab home. HSK results ~21–23 Nov at hskibt.jp.']
+];
+
+const PRETRIP = [
+  ['t14','Download HSK admission ticket (from ~29 Oct), print + save on phone'],
+  ['t6','Book kimono rental + photoshoot for Fri 13 Nov'],
+  ['t17','Book Aerotel Shanghai, Fri 6 Nov ~13:00–15:00'],
+  ['t12','eSIM covering China + Japan; plan for ICOCA'],
+  ['t19','Alipay with your card + a little CNY cash'],
+  ['t20','Get ¥20,000–30,000 cash'],
+  ['t18','Ask Juneyao: bags through to KIX? transit visa-free'],
+  ['t23','Ask Juneyao: return bags through to SGN?'],
+  ['t21','Email Ark: suitcase arriving by takkyūbin 12 Nov'],
+  ['t28','Photos of passport, visa, e-ticket, hotel bookings'],
+  ['t25','Practise pinyin typing (Sogou)'],
+  ['t9','Check opening days: Azuchi, Nagahama, Kiyosu, Honnō-ji, Toyokuni'],
+  ['t15','Check momiji forecast in early November']
+];
+
+const HOTELS = [
+  {n:'Welina Hotel Premier Nakanoshima EAST', dates:'6 → 11 Nov · 5 nights', ja:'大阪市西区江戸堀1-15-24',
+   en:'1-15-24 Edobori, Nishi-ku, Osaka 550-0002', tel:'06-6443-0777', near:'Higobashi (Yotsubashi line) · Yodoyabashi ~7 min walk', from:'11-06', to:'11-11'},
+  {n:'Hotel Livemax Meieki', dates:'11 → 12 Nov · check-in until 22:30', ja:'名古屋市中村区名駅南1-11-5-1',
+   en:'1-11-5-1 Meieki-minami, Nakamura-ku, Nagoya 450-0003', tel:'', near:'~6–10 min walk south of Nagoya Station', from:'11-11', to:'11-12'},
+  {n:'Ark Hotel Osaka Shinsaibashi', dates:'12 → 14 Nov · 2 nights', ja:'大阪市中央区島之内1-19-18',
+   en:'1-19-18 Shimanouchi, Chuo-ku, Osaka 542-0082', tel:'06-6252-5111', near:'Nagahoribashi Exit 4 (Sakaisuji line)', from:'11-12', to:'11-14'}
+];
+
+/* ===== SIMPLE HEADER SCENES — flat, calm, no blobs ===== */
+const SW = 800, SH = 440;
+function srng(seed){ let a = seed >>> 0; return () => { a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+function sHex(h){ h = h.replace('#', ''); return [0, 2, 4].map(i => parseInt(h.substr(i, 2), 16)); }
+function sMix(a, b, t){ const A = sHex(a), B = sHex(b); return '#' + A.map((v, i) => Math.round(v + (B[i] - v) * t).toString(16).padStart(2, '0')).join(''); }
+const s1 = n => n.toFixed(1);
+
+/* palette: sky top, sky bottom, 4 ridges back→front, sun */
+const SPAL = {
+  earth: {sky:['#EBC9A0','#F7E9D4'], r:['#E2B88E','#CF946A','#B0704C','#7E4A33'], sun:'#C8452C'},
+  forest:{sky:['#C9DFCB','#EFF4E7'], r:['#AECBA8','#84AC82','#5C8C61','#3B6948'], sun:'#FFFDF4'},
+  sea:   {sky:['#B8DCE8','#EDF6F4'], r:['#A3CEDC','#74B2C8','#4690B0','#256A8C'], sun:'#FFFFFF'},
+  wind:  {sky:['#CFDBF0','#F4F2F8'], r:['#C3CEE6','#A6B4D7','#8894C2','#6772A6'], sun:'#FFFFFF'}
+};
+const SPHASE = {
+  day:null,
+  dawn:{sky:['#EDB9AC','#FAE3CF'], tint:'#F2B3A0', k:.22, sun:'#FFF1DE'},
+  dusk:{sky:['#D98A7E','#F4C9A6'], tint:'#6A3E62', k:.42, sun:'#FFE2B0'},
+  night:{sky:['#16203D','#34406A'], tint:'#111933', k:.66, sun:'#F3EFDD'}
+};
+function sPal(theme, ph){
+  const b = SPAL[theme], p = SPHASE[ph];
+  if (!p) return {sky:b.sky, r:b.r, sun:b.sun, dark:false};
+  return {sky:p.sky, r:b.r.map(c => sMix(c, p.tint, p.k)), sun:theme === 'earth' && ph !== 'night' ? sMix(b.sun, p.sun, .35) : p.sun, dark:ph === 'night' || ph === 'dusk'};
+}
+function sRidge(yBase, amp, seed, freq, bottom = SH){
+  const r = srng(seed), p = [r() * 6, r() * 6];
+  let d = `M0 ${bottom} L`;
+  for (let x = 0; x <= SW; x += 5){
+    const y = yBase - amp * (0.7 * Math.sin(x * freq + p[0]) + 0.3 * Math.sin(x * freq * 2.1 + p[1]));
+    d += `${x} ${s1(y)} L`;
+  }
+  return d + `${SW} ${bottom}Z`;
+}
+const sSkyDefs = P => `<linearGradient id="sk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${P.sky[0]}"/><stop offset="1" stop-color="${P.sky[1]}"/></linearGradient>`;
+function sStars(n, maxY, seed){ const r = srng(seed); let s = ''; for (let i = 0; i < n; i++) s += `<circle cx="${s1(r() * SW)}" cy="${s1(r() * maxY)}" r="${s1(.6 + r() * .9)}" fill="#fff" opacity="${s1(.3 + r() * .5)}"/>`; return s; }
+function sDisc(P, ph, x, y, r){
+  if (ph === 'night') return `<circle cx="${x}" cy="${y}" r="${r}" fill="${P.sun}"/><circle cx="${x + r * .42}" cy="${y - r * .28}" r="${r * .9}" fill="${sMix(P.sky[0], P.sky[1], .3)}"/>`;
+  return `<circle cx="${x}" cy="${y}" r="${r}" fill="${P.sun}" opacity="${ph === 'day' ? .95 : .9}"/>`;
+}
+
+/* A — layered hills with mist between them */
+function sceneA(theme, ph){
+  const P = sPal(theme, ph), mist = P.dark ? '#ffffff' : '#ffffff';
+  let s = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${SW} ${SH}" preserveAspectRatio="xMidYMax slice"><defs>${sSkyDefs(P)}
+    <linearGradient id="ms" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${mist}" stop-opacity="0"/><stop offset="1" stop-color="${mist}" stop-opacity="${P.dark ? .06 : .35}"/></linearGradient></defs>
+    <rect width="${SW}" height="${SH}" fill="url(#sk)"/>`;
+  if (ph === 'night') s += sStars(50, 230, 3);
+  s += sDisc(P, ph, 590, ph === 'day' || ph === 'night' ? 150 : 205, 30);
+  const rows = [[246, 26, 4, .0085], [286, 22, 9, .011], [326, 18, 15, .014], [366, 14, 22, .018]];
+  rows.forEach(([y, a, sd, f], i) => {
+    s += `<path d="${sRidge(y, a, sd, f)}" fill="${P.r[i]}"/>`;
+    if (i < 3) s += `<rect x="0" y="${y - 10}" width="${SW}" height="${46}" fill="url(#ms)"/>`;
+  });
+  if (ph !== 'night') s += `<g fill="none" stroke="${sMix(P.r[3], '#000', .2)}" stroke-width="1.6" stroke-linecap="round" opacity=".55"><path d="M200 170 q5 -5 10 0 q5 -5 10 0"/><path d="M228 184 q4 -4 8 0 q4 -4 8 0"/><path d="M186 192 q4 -4 8 0 q4 -4 8 0"/></g>`;
+  return s + '</svg>';
+}
+
+/* B — mostly sky: long thin cloud streaks, a low distant horizon */
+function sceneB(theme, ph){
+  const P = sPal(theme, ph);
+  let s = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${SW} ${SH}" preserveAspectRatio="xMidYMax slice"><defs>${sSkyDefs(P)}</defs>
+    <rect width="${SW}" height="${SH}" fill="url(#sk)"/>`;
+  if (ph === 'night') s += sStars(60, 300, 5);
+  s += sDisc(P, ph, 600, ph === 'day' || ph === 'night' ? 160 : 290, 22);
+  const streak = P.dark ? '#ffffff' : '#ffffff', op = P.dark ? .1 : .7;
+  [[60, 170, 300, 7], [300, 205, 240, 5], [460, 240, 280, 8], [120, 262, 200, 5], [520, 290, 220, 6]].forEach(([x, y, w, h]) =>
+    s += `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${h / 2}" fill="${streak}" opacity="${op}"/>`);
+  s += `<path d="${sRidge(352, 10, 7, .006)}" fill="${P.r[1]}"/>`;
+  s += `<path d="M560 352 L604 318 Q612 312 620 318 L664 352Z" fill="${P.r[1]}"/><path d="M596 324 L604 318 Q612 312 620 318 L628 324 Q612 330 596 324Z" fill="${P.dark ? '#cfd6ea' : '#ffffff'}" opacity=".85"/>`;
+  s += `<path d="${sRidge(372, 6, 12, .01)}" fill="${P.r[2]}"/>`;
+  s += `<path d="${sRidge(388, 4, 18, .015)}" fill="${P.r[3]}"/>`;
+  return s + '</svg>';
+}
+
+/* C — line drawing: hairline ridges, ring sun, horizon ticks */
+function sceneC(theme, ph){
+  const P = sPal(theme, ph), ln = P.dark ? '#ffffff' : sMix(P.r[3], '#000', .15);
+  let s = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${SW} ${SH}" preserveAspectRatio="xMidYMax slice"><defs>${sSkyDefs(P)}</defs>
+    <rect width="${SW}" height="${SH}" fill="url(#sk)"/>`;
+  if (ph === 'night') s += sStars(40, 260, 9);
+  const sy = ph === 'day' || ph === 'night' ? 160 : 230;
+  s += `<circle cx="590" cy="${sy}" r="34" fill="none" stroke="${ln}" stroke-width="1.4" opacity=".7"/><circle cx="590" cy="${sy}" r="22" fill="${P.sun}" opacity="${P.dark ? .9 : .8}"/>`;
+  const strokeRidge = (y, a, sd, f, op, w) => { const d = sRidge(y, a, sd, f).replace(/^M0 \d+ L/, 'M').replace(/ L800 \d+Z$/, ''); return `<path d="${d}" fill="none" stroke="${ln}" stroke-width="${w}" opacity="${op}"/>`; };
+  s += `<path d="${sRidge(372, 14, 22, .018)}" fill="${P.r[0]}" opacity=".55"/>`;
+  s += strokeRidge(262, 30, 4, .0085, .35, 1.2) + strokeRidge(302, 24, 9, .011, .55, 1.4) + strokeRidge(342, 18, 15, .014, .8, 1.6);
+  s += `<line x1="0" y1="384" x2="800" y2="384" stroke="${ln}" stroke-width="1" opacity=".5"/>`;
+  for (let x = 20; x < 800; x += 40) s += `<line x1="${x}" y1="384" x2="${x}" y2="${x % 200 === 20 ? 374 : 379}" stroke="${ln}" stroke-width="1" opacity=".5"/>`;
+  return s + '</svg>';
+}
+
+const SCENE_CACHE = {};
+const svgURL = s => 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(s);
+function sceneHTML(theme, ph){
+  const k = theme + ph;
+  if (!SCENE_CACHE[k]) SCENE_CACHE[k] = svgURL(sceneA(theme, ph));
+  return `<img class="paint" src="${SCENE_CACHE[k]}" alt="">`;
+}
+
+/* ===== APP ===== */
+const KEY = 'jtd.v1', PKEY = 'jtd.preview', THEMES = ['earth','forest','sea','wind'];
+const CATS = {food:'Food', transport:'Transport', entry:'Entry', other:'Other', shopping:'Shopping'};
+const BUDGET_CATS = ['food','transport','entry','other'];
+const CUR_SYM = {JPY:'¥', CNY:'CN¥', VND:'₫'};
+const H = 3600e3, MIN = 60e3;
+
+const $ = (s, r=document) => r.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const clone = o => JSON.parse(JSON.stringify(o));
+
+/* ---------- icons ---------- */
+const I = {
+  flight:'<path d="M2 13.5 22 6l-3.5 4L22 18 14 14l-4 6-1-6-7-0.5z" fill="currentColor" stroke="none"/>',
+  train:'<rect x="5" y="3" width="14" height="13" rx="3"/><path d="M5 10h14M9 16l-3 4M15 16l3 4"/><circle cx="9" cy="13" r=".6" fill="currentColor"/><circle cx="15" cy="13" r=".6" fill="currentColor"/>',
+  see:'<path d="M3 6h18M5 9h14M7 6v14M17 6v14"/><path d="M3 6c3-1.5 15-1.5 18 0" />',
+  eat:'<path d="M4 11h16a8 8 0 0 1-16 0zM9 3c0 2 2 2 2 4M14 3c0 2 2 2 2 4"/>',
+  stay:'<path d="M3 11 12 4l9 7M5 10v10h14V10M10 20v-5h4v5"/>',
+  task:'<rect x="4" y="4" width="16" height="16" rx="4"/><path d="m8.5 12 2.5 2.5 5-5"/>',
+  test:'<path d="M4 20h4L19 9l-4-4L4 16zM13.5 6.5l4 4"/>',
+  shop:'<path d="M5 8h14l-1 12H6zM9 8V6a3 3 0 0 1 6 0v2"/>',
+  pin:'<path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/>',
+  now:'<circle cx="12" cy="12" r="8"/><path d="M12 7v5l3 2"/>',
+  day:'<rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+  money:'<circle cx="12" cy="12" r="8.5"/><path d="M8.5 7.5 12 12l3.5-4.5M8.5 12.5h7M8.5 15.5h7M12 12v5"/>',
+  info:'<circle cx="12" cy="12" r="8.5"/><path d="M12 11v6M12 7.5v.5"/>',
+  plus:'<path d="M12 5v14M5 12h14"/>',
+  gear:'<circle cx="12" cy="12" r="3"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1"/>',
+  here:'<circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="8"/><path d="M12 1v3M12 20v3M1 12h3M20 12h3"/>',
+  next:'<path d="M5 12h13M13 6l6 6-6 6"/>',
+  back:'<path d="M19 12H6M11 6l-6 6 6 6"/>',
+  phone:'<path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/>',
+  other:'<circle cx="6" cy="12" r="1.3" fill="currentColor"/><circle cx="12" cy="12" r="1.3" fill="currentColor"/><circle cx="18" cy="12" r="1.3" fill="currentColor"/>',
+  food:'<path d="M4 11h16a8 8 0 0 1-16 0zM9 3c0 2 2 2 2 4M14 3c0 2 2 2 2 4"/>',
+  transport:'<rect x="5" y="3" width="14" height="13" rx="3"/><path d="M5 10h14M9 16l-3 4M15 16l3 4"/>',
+  entry:'<path d="M3 9a2 2 0 0 0 0 4v4h18v-4a2 2 0 0 0 0-4V5H3zM14 5v12" stroke-dasharray="2 2"/>',
+  shopping:'<path d="M5 8h14l-1 12H6zM9 8V6a3 3 0 0 1 6 0v2"/>',
+  download:'<path d="M12 4v11M7 10l5 5 5-5M5 20h14"/>',
+  upload:'<path d="M12 16V5M7 10l5-5 5 5M5 20h14"/>',
+  x:'<path d="M6 6l12 12M18 6 6 18"/>'
+};
+const ic = (n, cls='') => `<svg class="${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${I[n]||I.other}</svg>`;
+
+/* ---------- storage ---------- */
+let storageOK = true;
+function defaults(){
+  return {v:1, expenses:[], checks:{}, edits:{}, custom:[], pin:null,
+    rates:{JPY:170, CNY:3650, VND:1}, cap:40000000, budgets:{}, prepaid:null,
+    themeLock:null, lastExport:0, exportedCount:0, notes:'', lite:false};
+}
+function sanitize(raw){
+  const d = defaults(); if (!raw || typeof raw !== 'object') return d;
+  const num = (x, f) => (typeof x === 'number' && isFinite(x)) ? x : f;
+  const dayKeys = new Set(DAYS.map(x => x.d).concat('pre'));
+  if (Array.isArray(raw.expenses)) d.expenses = raw.expenses.filter(e => e && isFinite(+e.a) && +e.a > 0 && CUR_SYM[e.c] && CATS[e.k] && dayKeys.has(e.d))
+    .map(e => ({id:String(e.id || uid()), a:+e.a, c:e.c, k:e.k, d:e.d, n:String(e.n || '').slice(0, 200), ts:num(e.ts, Date.now())}));
+  if (raw.checks && typeof raw.checks === 'object') for (const k in raw.checks) if (raw.checks[k]) d.checks[k] = 1;
+  if (raw.edits && typeof raw.edits === 'object') for (const k in raw.edits){
+    const e = raw.edits[k]; if (!e || typeof e !== 'object') continue;
+    const o = {}; if (/^\d\d:\d\d$/.test(e.t || '')) o.t = e.t;
+    if (typeof e.ti === 'string') o.ti = e.ti.slice(0, 160);
+    if (typeof e.de === 'string') o.de = e.de.slice(0, 1000);
+    if (e.hid) o.hid = 1; d.edits[k] = o;
+  }
+  if (Array.isArray(raw.custom)) d.custom = raw.custom.filter(c => c && dayKeys.has(c.d) && /^\d\d:\d\d$/.test(c.t || '') && [7,8,9].includes(+c.z))
+    .map(c => ({id:String(c.id || 'c' + uid()), d:c.d, t:c.t, z:+c.z, ti:String(c.ti || 'Step').slice(0, 160), de:String(c.de || '').slice(0, 1000)}));
+  d.pin = typeof raw.pin === 'string' ? raw.pin : null;
+  if (raw.rates) for (const c of ['JPY','CNY']) if (num(raw.rates[c], 0) > 0) d.rates[c] = raw.rates[c];
+  if (num(raw.cap, 0) > 0) d.cap = raw.cap;
+  if (raw.budgets && typeof raw.budgets === 'object') for (const k in raw.budgets){
+    if (!dayKeys.has(k) || typeof raw.budgets[k] !== 'object') continue;
+    d.budgets[k] = {}; for (const c of BUDGET_CATS){ const v = raw.budgets[k][c]; if (num(v, -1) >= 0) d.budgets[k][c] = v; }
+  }
+  if (Array.isArray(raw.prepaid)) d.prepaid = raw.prepaid.filter(p => p && num(+p.a, -1) >= 0 && CUR_SYM[p.c])
+    .map(p => ({id:String(p.id || uid()), n:String(p.n || 'Item').slice(0, 80), a:+p.a, c:p.c}));
+  if (THEMES.includes(raw.themeLock)) d.themeLock = raw.themeLock;
+  d.lastExport = num(raw.lastExport, 0); d.exportedCount = num(raw.exportedCount, 0);
+  d.notes = typeof raw.notes === 'string' ? raw.notes.slice(0, 5000) : '';
+  d.lite = !!raw.lite;
+  return d;
+}
+function load(){
+  try { localStorage.setItem('jtd.t', '1'); storageOK = localStorage.getItem('jtd.t') === '1'; localStorage.removeItem('jtd.t'); }
+  catch(e){ storageOK = false; }
+  try { return sanitize(JSON.parse(localStorage.getItem(KEY) || 'null')); } catch(e){ return defaults(); }
+}
+let S = load();
+function save(){
+  try { localStorage.setItem(KEY, JSON.stringify(S)); }
+  catch(e){ storageOK = false; toast('Couldn’t save on this phone — export a backup'); }
+}
+let preview = null;
+try { const p = JSON.parse(localStorage.getItem(PKEY) || 'null'); if (p && isFinite(p.ms)) preview = p.ms; } catch(e){}
+function setPreview(ms){
+  preview = ms;
+  try { ms == null ? localStorage.removeItem(PKEY) : localStorage.setItem(PKEY, JSON.stringify({ms})); } catch(e){}
+}
+
+/* ---------- time ---------- */
+const nowMs = () => preview ?? Date.now();
+function epoch(d, t, z){
+  const [mo, da] = d.split('-').map(Number), [h, mi] = t.split(':').map(Number);
+  return Date.UTC(YEAR, mo - 1, da, h - z, mi);
+}
+function inZone(ms, z){ const x = new Date(ms + z * H); return {y:x.getUTCFullYear(), mo:x.getUTCMonth() + 1, d:x.getUTCDate(), h:x.getUTCHours(), mi:x.getUTCMinutes(), wd:x.getUTCDay()}; }
+const pad = n => String(n).padStart(2, '0');
+const hm = (ms, z) => { const x = inZone(ms, z); return pad(x.h) + ':' + pad(x.mi); };
+const WD = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MO = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+function dur(ms){
+  ms = Math.abs(ms); const d = Math.floor(ms / 864e5), h = Math.floor(ms % 864e5 / H), m = Math.floor(ms % H / MIN);
+  if (d) return d + 'd ' + h + 'h';
+  if (h) return h + 'h ' + pad(m) + 'm';
+  return m + ' min';
+}
+const dateLabel = (ms, z) => { const x = inZone(ms, z); return `${WD[x.wd]} ${x.d} ${MO[x.mo - 1]}`; };
+const dayInfo = d => DAYS.find(x => x.d === d);
+const dayName = d => { if (d === 'pre') return 'Before trip'; const x = dayInfo(d); return x ? `${x.w} ${+d.slice(3)} Nov` : d; };
+
+/* ---------- steps ---------- */
+let STEPS_CACHE = null;
+function steps(){
+  if (STEPS_CACHE) return STEPS_CACHE;
+  const base = RAW_STEPS.map(r => {
+    const [d, t, z, s, c, k, p, ti, de, ck, opt] = r;
+    return {id:d + '_' + t, d, t0:t, t, z, s, c, k, p, ti, de, ck:ck || [], opt:!!opt, custom:false};
+  });
+  for (const st of base){
+    const e = S.edits[st.id]; if (!e) continue;
+    if (e.t) st.t = e.t; if (e.ti != null) st.ti = e.ti; if (e.de != null) st.de = e.de;
+    st.hid = !!e.hid; st.edited = true;
+  }
+  const all = base.concat(S.custom.map(c => ({id:c.id, d:c.d, t:c.t, z:c.z, s:null, c:null, k:'task', p:'', ti:c.ti, de:c.de, ck:[], custom:true})));
+  all.forEach(x => x.ms = epoch(x.d, x.t, x.z));
+  all.sort((a, b) => a.ms - b.ms || (a.custom - b.custom));
+  // custom steps inherit stop + city from the step before them
+  let prev = all.find(x => !x.custom);
+  for (const x of all){ if (x.custom){ x.s = prev.s; x.c = prev.c; x.p = x.p || CITIES[prev.c].n; } else prev = x; }
+  STEPS_CACHE = all; return all;
+}
+const visible = () => steps().filter(x => !x.hid);
+function invalidate(){ STEPS_CACHE = null; }
+
+function status(){
+  const L = visible(), now = nowMs();
+  if (S.pin){
+    const i = L.findIndex(x => x.id === S.pin);
+    if (i >= 0) return {phase:'trip', i, cur:L[i], next:L[i + 1] || null, L, manual:true};
+  }
+  if (now < L[0].ms) return {phase:'pre', i:-1, cur:null, next:L[0], L};
+  const end = L[L.length - 1].ms + 6 * H;
+  if (now >= end) return {phase:'post', i:L.length - 1, cur:L[L.length - 1], next:null, L};
+  let i = 0; while (i + 1 < L.length && L[i + 1].ms <= now) i++;
+  return {phase:'trip', i, cur:L[i], next:L[i + 1] || null, L};
+}
+const zoneNow = st => st.phase === 'pre' ? 7 : (st.cur ? st.cur.z : 7);
+function activeDay(st){ if (st.phase === 'pre') return 'pre'; return st.cur.d; }
+
+/* ---------- money ---------- */
+const rate = c => S.rates[c] || 1;
+const toV = (a, c) => a * rate(c);
+const fromV = (v, c) => v / rate(c);
+function fmt(a, c, opt={}){
+  const sym = CUR_SYM[c];
+  if (c === 'VND'){
+    if (opt.short && Math.abs(a) >= 1e6) return (a / 1e6).toFixed(Math.abs(a) >= 1e7 ? 1 : 2).replace(/\.?0+$/, '') + 'M ₫';
+    if (opt.short && Math.abs(a) >= 1e3) return Math.round(a / 1e3).toLocaleString('en-US') + 'k ₫';
+    return Math.round(a).toLocaleString('en-US') + ' ₫';
+  }
+  const dec = c === 'CNY' && Math.abs(a) < 100 && Math.round(a) !== a ? 1 : 0;
+  return (a < 0 ? '−' : '') + sym + Math.abs(a).toLocaleString('en-US', {maximumFractionDigits:dec, minimumFractionDigits:0});
+}
+const fmtV = (v, c, opt) => fmt(fromV(v, c), c, opt);
+function budgetOf(d){
+  const day = dayInfo(d); if (!day) return {cur:'VND', cats:{food:0, transport:0, entry:0, other:0}};
+  const o = Object.assign({}, day.b, S.budgets[d] || {});
+  return {cur:day.cur, cats:o};
+}
+const budgetV = d => { const b = budgetOf(d); return BUDGET_CATS.reduce((s, c) => s + toV(b.cats[c] || 0, b.cur), 0); };
+const spentV = (d, cat) => S.expenses.filter(e => e.d === d && e.k !== 'shopping' && (!cat || e.k === cat)).reduce((s, e) => s + toV(e.a, e.c), 0);
+const prepaidList = () => S.prepaid || PREPAID_DEFAULT;
+const prepaidV = () => prepaidList().reduce((s, p) => s + toV(p.a, p.c), 0);
+const shoppingV = () => S.expenses.filter(e => e.k === 'shopping').reduce((s, e) => s + toV(e.a, e.c), 0);
+function tripMoney(st){
+  const today = activeDay(st), idx = DAYS.findIndex(x => x.d === today);
+  const pre = S.expenses.filter(e => e.d === 'pre' && e.k !== 'shopping').reduce((s, e) => s + toV(e.a, e.c), 0);
+  let spent = pre, remain = 0, planToDate = 0, spentToDate = 0;
+  DAYS.forEach((d, i) => {
+    const b = budgetV(d.d), s = spentV(d.d);
+    spent += s;
+    if (st.phase === 'post' || i < idx){ planToDate += b; spentToDate += s; }
+    else if (i === idx){ if (s > b){ planToDate += b; spentToDate += s; } remain += Math.max(0, b - s); }
+    else remain += b;
+  });
+  if (st.phase === 'pre') remain = DAYS.reduce((s, d) => s + budgetV(d.d), 0);
+  const prepaid = prepaidV();
+  return {prepaid, spent, remain, projected:prepaid + spent + remain, cap:S.cap, shopping:shoppingV(), balance:planToDate - spentToDate, planned:DAYS.reduce((s, d) => s + budgetV(d.d), 0)};
+}
+
+/* ---------- theme + sky ---------- */
+let theme = S.themeLock || THEMES[Math.floor(Math.random() * THEMES.length)];
+const SKY_DAY = {earth:['#A9CBE0','#F2DDB4'], forest:['#A5D1DE','#E1EFCC'], sea:['#8ACBE4','#DDF2F3'], wind:['#9CBDF0','#EAF1FB']};
+const SKY = {dawn:['#F2B79E','#FCE7C8'], dusk:['#5B6AA6','#F0A27C'], night:['#0D1931','#2A3C68']};
+function phaseOf(h){ return h >= 5 && h < 8 ? 'dawn' : h >= 8 && h < 16 ? 'day' : h >= 16 && h < 19 ? 'dusk' : 'night'; }
+function applySky(z){
+  const h = inZone(nowMs(), z).h, ph = phaseOf(h), r = document.documentElement;
+  r.dataset.theme = theme; r.dataset.phase = ph;
+  const [a, b] = ph === 'day' ? SKY_DAY[theme] : SKY[ph];
+  r.style.setProperty('--sky1', a); r.style.setProperty('--sky2', b);
+  r.style.setProperty('--hdr', ph === 'night' || ph === 'dusk' ? '#F4F1E8' : 'var(--ink)');
+  return ph;
+}
+/* ---------- journey card ---------- */
+function journeyHTML(st){
+  const n = STOPS.length, cs = st.phase === 'pre' ? 0 : st.phase === 'post' ? n - 1 : st.cur.s;
+  const W = 360, x0 = 14, gap = (W - 2 * x0) / (n - 1);
+  let track = `<line x1="${x0}" y1="11" x2="${W - x0}" y2="11" stroke="var(--line)" stroke-width="2" stroke-dasharray="2 4" stroke-linecap="round"/>`;
+  if (cs > 0) track += `<line x1="${x0}" y1="11" x2="${x0 + cs * gap}" y2="11" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round"/>`;
+  STOPS.forEach((p, i) => {
+    const x = x0 + i * gap, cur = i === cs && st.phase !== 'post', past = i < cs || st.phase === 'post';
+    track += cur
+      ? `<circle class="pulse" cx="${x}" cy="11" r="10" fill="var(--accent2)" opacity=".22"/><circle cx="${x}" cy="11" r="5.5" fill="var(--accent2)" stroke="var(--card)" stroke-width="2"/>`
+      : `<circle cx="${x}" cy="11" r="${past ? 3.6 : 3.2}" fill="${past ? 'var(--accent)' : 'var(--card)'}" stroke="${past ? 'var(--accent)' : 'var(--muted)'}" stroke-width="1.4"/>`;
+    track += `<text x="${x}" y="34" text-anchor="middle" class="${cur ? 'jt-cur' : past ? 'jt-past' : 'jt-fut'}">${esc(p.n)}</text>`;
+  });
+  let head = '', sub = '', coord = '';
+  if (st.phase === 'pre'){ const f = visible()[0]; head = 'Saigon'; sub = `Leaving ${dayName(f.d)}, Grab at 21:00`; }
+  else if (st.phase === 'post'){ head = 'Home'; sub = 'Trip complete · おかえり'; }
+  else {
+    const c = st.cur, city = CITIES[c.c], base = STOPS[c.s].n;
+    if (c.c === 'AIR'){ head = 'In the air'; sub = `${c.p} · ${c.ti.split(' · ')[0]}`; }
+    else { head = city.n; sub = c.c === 'NARA' || c.c === 'KYO' ? 'Day trip' : '';
+    if (!sub) sub = ''; }
+    const nx = st.L.slice(st.i + 1).find(x => x.s > c.s);
+    if (nx){ const when = nx.d === c.d ? 'at ' + nx.t : 'on ' + dayInfo(nx.d).w + ' ' + +nx.d.slice(3); sub += sub ? ` · next stop ${STOPS[nx.s].n} ${when}` : `Next stop ${STOPS[nx.s].n} ${when}`; }
+    if (city.lat != null) coord = `${city.lat.toFixed(2)}°N<br>${city.lon.toFixed(2)}°E`;
+  }
+  return `<section class="card journey"><div class="jtop"><div><div class="jnow">${esc(head)}</div>${sub ? `<div class="jsub">${esc(sub)}</div>` : ''}</div>${coord ? `<div class="jco mono">${coord}</div>` : ''}</div>
+    <svg class="jtrack" viewBox="0 0 ${W} 42" role="img" aria-label="Journey: stop ${cs + 1} of ${n}">${track}</svg></section>`;
+}
+
+/* ---------- UI state ---------- */
+let tab = 'now', viewDay = null, dayFilter = 'today', sceneKey = '';
+const app = () => $('#app');
+
+function render(){
+  applyLite();
+  const st = status(), z = zoneNow(st), ph = applySky(z), now = nowMs(), t = inZone(now, z);
+  const dayNo = st.phase === 'trip' ? DAYS.findIndex(d => d.d === st.cur.d) + 1 : 0;
+  const sk = theme + ph;
+  if (sk !== sceneKey){ sceneKey = sk; $('#scn').innerHTML = sceneHTML(theme, ph); }
+  $('#hud').innerHTML = `<div class="wrap hud ${ph === 'day' || ph === 'dawn' ? 'light' : ''}"><div class="brand"><span class="seal">旅</span><div><b>Japan, autumn ’26</b><small>${st.phase === 'pre' ? 'Before departure' : st.phase === 'post' ? 'Trip complete' : `Day ${dayNo} of ${DAYS.length} · ${esc(dayInfo(st.cur.d).label)}`}</small></div></div>
+    <div class="hr-right"><div class="clock"><b>${pad(t.h)}:${pad(t.mi)}</b><span>${WD[t.wd]} ${t.d} ${MO[t.mo - 1]} · ${ZONE_SHORT[z]}</span></div>
+    <button class="iconbtn" id="gear" aria-label="Settings">${ic('gear')}</button></div></div>`;
+  $('#gear').onclick = () => openSettings();
+  document.querySelectorAll('.tab').forEach(b => b.classList.toggle('on', b.dataset.t === tab));
+  const v = {now:viewNow, day:viewDayTab, money:viewMoney, info:viewInfo}[tab](st);
+  app().innerHTML = journeyHTML(st) + banners(st) + v;
+  wire(st);
+}
+
+function banners(st){
+  let h = '';
+  if (!storageOK) h += `<div class="banner err">Saving is blocked in this browser view. Use <b>Export</b> after adding expenses, or open the file in Chrome.</div>`;
+  if (preview != null){
+    const z = zoneNow(st);
+    h += `<div class="banner preview"><span>Preview <b>${dateLabel(preview, z)} ${hm(preview, z)} ${ZONE_SHORT[z]}</b></span><span class="sp"></span>
+      <button class="chipbtn" data-pv="-60">−1h</button><button class="chipbtn" data-pv="60">+1h</button><button class="chipbtn" data-pv="step">Next step</button><button class="chipbtn solid" data-pv="off">Exit</button></div>`;
+  }
+  if (st.manual){
+    const late = st.next && nowMs() > st.next.ms ? ` · next was planned ${dur(nowMs() - st.next.ms)} ago` : '';
+    h += `<div class="banner manual"><span>Following you manually${late}</span><span class="sp"></span><button class="chipbtn solid" data-act="auto">Back to clock</button></div>`;
+  }
+  const n = S.expenses.length - S.exportedCount;
+  if (tab === 'money' && n > 0 && (n >= 5 || (S.lastExport && Date.now() - S.lastExport > 2 * 864e5) || !S.lastExport && n >= 3))
+    h += `<div class="banner backup"><span>${n} new expense${n > 1 ? 's' : ''} since your last backup</span><span class="sp"></span><button class="chipbtn solid" data-act="export">Export</button></div>`;
+  return h;
+}
+
+/* ----- NOW tab ----- */
+function checklist(step){
+  if (!step.ck.length) return '';
+  return `<ul class="checks">${step.ck.map((c, i) => `<li><label><input type="checkbox" data-ck="${esc(step.id)}:${i}" ${S.checks[step.id + ':' + i] ? 'checked' : ''}><span>${esc(c)}</span></label></li>`).join('')}</ul>`;
+}
+function stepHead(step){
+  return `<div class="place">${ic('pin')}<span>${esc(step.p)}</span></div>`;
+}
+function zoneNote(a, b){ return a && b && a.z !== b.z ? ` <span class="zoneflag">clock ${b.z > a.z ? '+' : '−'}${Math.abs(b.z - a.z)}h</span>` : ''; }
+function viewNow(st){
+  const now = nowMs(); let h = '';
+  if (st.phase === 'pre'){
+    const n = st.next;
+    h += `<h2 class="sec">Countdown</h2><div class="card hudcard next"><span class="tag"><i class="dot"></i>Departure in</span>
+      <div class="count" style="margin-top:8px">${dur(n.ms - now)}</div>
+      <div class="sub" style="margin-top:4px">First step: ${dayName(n.d)} · ${n.t} ${ZONE_SHORT[n.z]} — ${esc(n.ti)}</div></div>`;
+    h += `<h2 class="sec">Before you go</h2><div class="card"><ul class="checks" style="margin:0">${PRETRIP.map(([id, tx]) =>
+      `<li><label><input type="checkbox" data-ck="todo:${id}" ${S.checks['todo:' + id] ? 'checked' : ''}><span>${esc(tx)}</span></label></li>`).join('')}</ul></div>`;
+    h += `<h2 class="sec">First step</h2>` + nextCard(n, now, null);
+    return h + moneyMini(st);
+  }
+  if (st.phase === 'post'){
+    const m = tripMoney(st);
+    h += `<h2 class="sec">おかえり</h2><div class="card hudcard now"><div class="steptitle">Welcome home</div>
+      <div class="sub">Trip total: <b class="mono">${fmt(m.prepaid + m.spent, 'VND', {short:true})}</b> of ${fmt(m.cap, 'VND', {short:true})} · shopping ${fmt(m.shopping, 'VND', {short:true})}</div>
+      <div class="sub" style="margin-top:6px">HSK4 results ~21–23 Nov at hskibt.jp</div>
+      <div class="row2"><button class="btn primary wide" data-act="export">${ic('download')} Export final backup</button></div></div>`;
+    return h;
+  }
+  const c = st.cur, n = st.next;
+  const span = n ? n.ms - c.ms : 1, el = Math.max(0, Math.min(1, (now - c.ms) / span));
+  const since = now - c.ms;
+  h += `<h2 class="sec">Now</h2><div class="card hudcard now"><div class="meta"><span class="tag"><i class="dot"></i>${st.manual ? 'You are here' : 'Now'}</span>
+      <span class="rel">${c.t} ${ZONE_SHORT[c.z]} · ${st.manual ? 'set by you' : since >= 0 ? 'started ' + dur(since) + ' ago' : 'in ' + dur(since)}</span></div>
+    <div class="steptitle">${esc(c.ti)}</div>${stepHead(c)}${c.de ? `<p class="detail">${esc(c.de)}</p>` : ''}${checklist(c)}
+    ${n ? `<div class="prog" aria-hidden="true"><i style="width:${(el * 100).toFixed(1)}%"></i></div>` : ''}
+    <div class="row2">${n ? `<button class="btn primary wide" data-act="advance">${ic('next')} Done · on to next</button>` : ''}
+      <button class="btn" data-act="pickday">${ic('here')} I’m elsewhere</button></div></div>`;
+  if (n) h += `<h2 class="sec">Next</h2>` + nextCard(n, now, c);
+  const later = st.L.slice(st.i + 2).filter(x => x.d === c.d).slice(0, 4);
+  if (later.length) h += `<h2 class="sec">Later today</h2><div class="card later">${later.map(x =>
+    `<div class="li" data-step="${esc(x.id)}"><span class="t">${x.t}</span>${ic(x.k, 'ico k-' + x.k)}<span>${esc(x.ti)}</span></div>`).join('')}</div>`;
+  return h + moneyMini(st);
+}
+function nextCard(n, now, c){
+  return `<div class="card next" data-step="${esc(n.id)}"><div class="meta"><span class="tag"><i class="dot"></i>Next</span>
+    <span class="rel">${dayName(n.d)} · ${n.t} ${ZONE_SHORT[n.z]}${zoneNote(c, n)}</span></div>
+    <div class="count" style="margin-top:8px">${n.ms - now >= 0 ? 'in ' + dur(n.ms - now) : dur(now - n.ms) + '<small>overdue</small>'}</div>
+    <div class="steptitle">${esc(n.ti)}</div>${stepHead(n)}${n.de ? `<p class="detail">${esc(n.de)}</p>` : ''}${checklist(n)}</div>`;
+}
+function ring(spent, budget, cur){
+  const p = budget > 0 ? spent / budget : (spent > 0 ? 1.01 : 0), C = 2 * Math.PI * 40;
+  const col = p > 1 ? 'var(--bad)' : p > .85 ? 'var(--warn)' : 'var(--accent)';
+  return `<div class="ring"><svg viewBox="0 0 96 96"><circle cx="48" cy="48" r="40" fill="none" stroke="var(--soft)" stroke-width="9"/>
+    ${p > 0 ? `<circle cx="48" cy="48" r="40" fill="none" stroke="${col}" stroke-width="9" stroke-linecap="round" stroke-dasharray="${(Math.min(p, 1) * C).toFixed(1)} ${C.toFixed(1)}"/>` : ''}</svg>
+    <div class="c"><div><b>${budget > 0 ? Math.round(p * 100) + '%' : '—'}</b><br><small>USED</small></div></div></div>`;
+}
+function todayRing(st){
+  const d = activeDay(st), cur = ZONE_CUR[zoneNow(st)];
+  const b = budgetV(d), s = spentV(d), left = b - s;
+  return `<div class="ringrow">${ring(s, b, cur)}
+    <div><div class="big">${fmtV(s, cur)} <small>/ ${fmtV(b, cur)}</small></div>
+    <div class="sub ${left < 0 ? 'over' : 'ok'}">${left < 0 ? fmtV(-left, cur) + ' over' : fmtV(left, cur) + ' left today'}</div>
+    <div class="tiny" style="margin-top:4px">${cur !== 'VND' ? '≈ ' + fmt(s, 'VND', {short:true}) + ' / ' + fmt(b, 'VND', {short:true}) : ''}</div></div></div>`;
+}
+function moneyMini(st){
+  if (activeDay(st) === 'pre'){
+    const m = tripMoney(st);
+    return `<h2 class="sec">Budget</h2><div class="card" data-go="money"><div class="big">${fmt(m.projected, 'VND', {short:true})} <small>planned of ${fmt(m.cap, 'VND', {short:true})}</small></div>
+      <div class="sub">Prepaid ${fmt(m.prepaid, 'VND', {short:true})} · daily budgets ${fmt(m.planned, 'VND', {short:true})}</div></div>`;
+  }
+  return `<h2 class="sec">Today’s budget</h2><div class="card" data-go="money">${todayRing(st)}</div>`;
+}
+
+/* ----- DAY tab ----- */
+function viewDayTab(st){
+  const today = activeDay(st);
+  if (!viewDay) viewDay = today === 'pre' ? DAYS[0].d : today;
+  const all = steps().filter(x => x.d === viewDay), day = dayInfo(viewDay);
+  const curId = st.cur && st.phase === 'trip' ? st.cur.id : null, curMs = st.cur ? st.cur.ms : -Infinity;
+  const chips = DAYS.map(d => {
+    const past = st.phase === 'post' || (today !== 'pre' && d.d < today);
+    return `<button class="dchip ${d.d === viewDay ? 'on' : ''} ${past ? 'past' : ''}" data-day="${d.d}"><small>${d.w}</small><b>${+d.d.slice(3)}</b></button>`;
+  }).join('');
+  const b = budgetV(viewDay), s = spentV(viewDay), cur = day.cur;
+  const hot = HOTELS.find(x => x.from <= viewDay && x.to > viewDay);
+  let h = `<div class="daychips" id="dchips">${chips}</div>
+    <div class="card"><div class="dayhead"><div><div class="tiny">${dayName(viewDay).toUpperCase()}</div><h3>${esc(day.label)}</h3></div>
+      <div style="text-align:right"><div class="mono" style="font-weight:700">${fmtV(s, cur)}</div><div class="tiny">of ${fmtV(b, cur)}</div></div></div>
+      <div class="sub" style="margin-top:6px">Tonight: ${esc(day.hotel)}${hot && hot.from === viewDay ? ' · check in today' : ''}</div>
+      <div class="tl">${all.map(x => {
+        const cls = x.hid ? 'hid' : x.id === curId ? 'cur' : (st.phase === 'post' || x.ms < curMs) ? 'done' : '';
+        return `<div class="st ${cls} ${x.opt ? 'opt' : ''}" data-step="${esc(x.id)}"><span class="t">${x.t}${x.z !== day.z ? `<br><span class="zoneflag">${ZONE_SHORT[x.z]}</span>` : ''}</span><span class="nd"></span>
+          <span class="bd"><b>${esc(x.ti)}${x.edited || x.custom ? '<span class="edited">✎</span>' : ''}</b><span>${esc(x.p)}</span></span></div>`;
+      }).join('')}</div>
+      <div class="row2"><button class="btn ghost wide" data-act="addstep">${ic('plus')} Add a step</button></div></div>`;
+  return h;
+}
+
+/* ----- MONEY tab ----- */
+function viewMoney(st){
+  const today = activeDay(st), m = tripMoney(st);
+  let h = '';
+  if (today !== 'pre' && st.phase !== 'post'){
+    const cur = ZONE_CUR[zoneNow(st)], bb = budgetOf(today);
+    h += `<h2 class="sec">Today · ${dayName(today)}</h2><div class="card hudcard">${todayRing(st)}
+      <div class="cats">${BUDGET_CATS.map(c => {
+        const bv = toV(bb.cats[c] || 0, bb.cur), sv = spentV(today, c);
+        if (!bv && !sv) return '';
+        const p = bv ? sv / bv : 1;
+        return `<div class="cat"><span>${CATS[c]}</span><span class="bar"><i class="${p > 1 ? 'over' : ''}" style="width:${Math.min(100, p * 100)}%"></i></span><span class="v">${fmtV(sv, cur)} / ${fmtV(bv, cur)}</span></div>`;
+      }).join('')}</div>
+      ${BUDGET_NOTES[today] ? `<div class="small" style="margin-top:10px">${esc(BUDGET_NOTES[today])}</div>` : ''}</div>`;
+    const bal = m.balance;
+    h += `<div class="card"><div class="tiny">RUNNING BALANCE · DAYS BEFORE TODAY</div><div class="big ${bal < 0 ? 'over' : 'ok'}" style="margin-top:4px">${bal < 0 ? fmtV(-bal, 'JPY') + ' behind' : fmtV(bal, 'JPY') + ' ahead'}</div>
+      <div class="sub">${bal < 0 ? 'Spent more than the daily budgets so far.' : 'Unspent budget from earlier days, if you logged everything.'} ≈ ${fmt(Math.abs(bal), 'VND', {short:true})}</div></div>`;
+  }
+  const seg = (v, c) => `<i style="width:${(Math.max(0, v) / Math.max(m.cap, m.projected) * 100).toFixed(2)}%;background:${c}"></i>`;
+  h += `<h2 class="sec">Whole trip</h2><div class="card"><div class="big">${fmt(m.prepaid + m.spent, 'VND', {short:true})} <small>used of ${fmt(m.cap, 'VND', {short:true})}</small></div>
+    <div class="sub">Projected finish: <b class="mono ${m.projected > m.cap ? 'over' : 'ok'}">${fmt(m.projected, 'VND', {short:true})}</b> ${m.projected > m.cap ? '— over the cap' : '— ' + fmt(m.cap - m.projected, 'VND', {short:true}) + ' buffer'}</div>
+    <div class="stack">${seg(m.prepaid, 'var(--muted)')}${seg(m.spent, 'var(--accent)')}${seg(m.remain, 'color-mix(in srgb,var(--accent) 30%,var(--soft))')}</div>
+    <div class="legend"><span style="--c:var(--muted)">Prepaid ${fmt(m.prepaid, 'VND', {short:true})}</span><span style="--c:var(--accent)">Spent ${fmt(m.spent, 'VND', {short:true})}</span><span style="--c:color-mix(in srgb,var(--accent) 30%,var(--soft))">Still planned ${fmt(m.remain, 'VND', {short:true})}</span></div>
+    <div class="hr"></div><div class="meta"><span>Shopping <span class="small">(outside budget)</span></span><b class="mono">${fmtV(m.shopping, 'JPY')} · ${fmt(m.shopping, 'VND', {short:true})}</b></div></div>`;
+  h += `<h2 class="sec">By day</h2><div class="card"><table class="days">${DAYS.map(d => {
+    const b = budgetV(d.d), s = spentV(d.d), p = b ? s / b : 0;
+    return `<tr class="${d.d === today ? 'today' : ''}" data-day-m="${d.d}"><td>${d.w} ${+d.d.slice(3)}<div class="tiny">${esc(d.label)}</div></td><td style="width:34%"><div class="minibar"><i class="${p > 1 ? 'over' : ''}" style="width:${Math.min(100, p * 100)}%"></i></div></td>
+      <td class="n">${fmtV(s, d.cur, {short:true})}<div class="tiny">/ ${fmtV(b, d.cur, {short:true})}</div></td></tr>`;
+  }).join('')}</table></div>`;
+  const opts = [['today', 'Today'], ['all', 'All']].concat(DAYS.map(d => [d.d, d.w + ' ' + +d.d.slice(3)]), [['pre', 'Before trip']]);
+  const flt = dayFilter === 'today' ? today : dayFilter;
+  const list = S.expenses.filter(e => flt === 'all' || e.d === flt).sort((a, b) => b.ts - a.ts);
+  h += `<h2 class="sec">Expenses</h2><div class="card"><select class="inp" id="dayFilter" style="padding:8px 10px;font-size:14px">${opts.map(([v, l]) => `<option value="${v}" ${v === dayFilter ? 'selected' : ''}>${l}</option>`).join('')}</select>
+    <div style="margin-top:8px">${list.length ? list.map(e => `<div class="exp" data-exp="${esc(e.id)}"><span class="em">${ic(e.k)}</span>
+      <span class="nt">${esc(e.n || CATS[e.k])}<small>${CATS[e.k]} · ${dayName(e.d)}</small></span>
+      <span class="a">${fmt(e.a, e.c)}<small>${e.c !== 'VND' ? fmt(toV(e.a, e.c), 'VND', {short:true}) : ''}</small></span></div>`).join('') : '<div class="empty">Nothing yet. Tap + to add.</div>'}</div></div>`;
+  h += `<h2 class="sec">Quick convert</h2><div class="card"><div class="grid2"><input class="inp mono" id="cvIn" inputmode="decimal" placeholder="¥ amount"><div class="inp mono" id="cvOut" style="background:var(--soft)">— ₫</div></div>
+    <div class="tiny" style="margin-top:6px">¥1 = ${S.rates.JPY} ₫ · CN¥1 = ${S.rates.CNY} ₫ · change in Settings</div></div>`;
+  return h;
+}
+
+/* ----- INFO tab ----- */
+function viewInfo(st){
+  const today = activeDay(st), tonight = HOTELS.find(x => today !== 'pre' && x.from <= today && x.to > today) || HOTELS[0];
+  const tel = n => n ? `<a href="tel:${n.replace(/[^\d+]/g, '')}">${esc(n)}</a>` : '<span class="small">see booking email</span>';
+  let h = `<h2 class="sec">Tonight’s hotel</h2><div class="card hudcard"><b style="font:700 17px var(--serif)">${esc(tonight.n)}</b>
+    <div class="ja">${esc(tonight.ja)}</div><div class="small">${esc(tonight.en)}</div>
+    <dl class="kv"><dt>Dates</dt><dd>${esc(tonight.dates)}</dd><dt>Phone</dt><dd>${tel(tonight.tel)}</dd><dt>Station</dt><dd>${esc(tonight.near)}</dd></dl>
+    <div class="row2"><button class="btn primary wide" data-taxi="${HOTELS.indexOf(tonight)}">Show to taxi driver</button>
+    <a class="btn" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(tonight.ja)}" target="_blank" rel="noopener">${ic('pin')} Map</a></div></div>`;
+  h += `<h2 class="sec">All hotels</h2>${HOTELS.filter(x => x !== tonight).map(x => `<div class="card"><b>${esc(x.n)}</b><div class="small">${esc(x.dates)}</div>
+    <div style="margin-top:4px">${esc(x.ja)}</div><dl class="kv"><dt>Phone</dt><dd>${tel(x.tel)}</dd><dt>Station</dt><dd>${esc(x.near)}</dd></dl>
+    <div class="row2"><button class="btn" data-taxi="${HOTELS.indexOf(x)}">Taxi card</button></div></div>`).join('')}`;
+  h += `<h2 class="sec">Emergency</h2><div class="card"><dl class="kv">
+    <dt>Police</dt><dd>${tel('110')}</dd><dt>Ambulance / fire</dt><dd>${tel('119')}</dd>
+    <dt>Japan Visitor Hotline</dt><dd>${tel('050-3816-2787')} <span class="small">English, 24h</span></dd>
+    <dt>PVI insurance</dt><dd>${tel('028 999 66 995')} · ${tel('1900 54 54 58')}<div class="small">Policy 26A0500055530 · gói Bạc · medical 1 billion ₫ · Zalo: PVI Digital</div></dd>
+    <dt>Chubb (Agoda)</dt><dd class="small">Flight cancellation 10M ₫ · delay 1.2M ₫ · baggage delay 1M ₫</dd></dl></div>`;
+  h += `<h2 class="sec">Flights · Juneyao</h2><div class="card"><dl class="kv">
+    <dt>HO1328</dt><dd>SGN 00:25 → PVG 05:30 · Fri 6 Nov</dd><dt>HO1337</dt><dd>PVG 17:50 → KIX 20:55 · Fri 6 Nov</dd>
+    <dt>HO1506</dt><dd>KIX 13:45 → PVG 15:15 · Sat 14 Nov</dd><dt>HO1327</dt><dd>PVG 19:55 → SGN 23:25 · Sat 14 Nov</dd>
+    <dt>Baggage</dt><dd>5 kg cabin + 2 × 23 kg checked</dd></dl></div>`;
+  h += `<h2 class="sec">HSK4 · Sat 7 Nov</h2><div class="card"><dl class="kv"><dt>Venue</dt><dd>日中文化芸術専門学校 天王寺</dd><dt>Times</dt><dd>Reception 08:50 · start 09:30</dd>
+    <dt>Bring</dt><dd>Admission ticket + passport</dd><dt>Office</dt><dd>${tel('03-6912-9280')}<div class="small">hsk.jimukyoku@hskibt.jp</div></dd></dl></div>`;
+  h += `<h2 class="sec">Remember</h2><div class="card"><ul class="list">
+    <li>No JR Pass / Keihan pass — ICOCA single fares are cheaper for this plan.</li>
+    <li>Nagahama → Nagoya: buy a <b>paper ticket</b>, IC cards can’t cross Maibara.</li>
+    <li>Livemax check-in closes <b>22:30</b>. Nagahama museum closes ~17:00.</li>
+    <li>Tax refund: ¥5,000+ per store per day, goods unopened, kiosk at KIX <b>before</b> check-in.</li>
+    <li>Carry ¥20,000–30,000 cash for small temples and local restaurants.</li>
+    <li>Avoid Shin-Imamiya / Nishinari at night.</li></ul></div>`;
+  h += `<h2 class="sec">My notes</h2><div class="card"><textarea class="inp" id="notes" placeholder="Booking codes, kimono shop address, anything…">${esc(S.notes)}</textarea><div class="tiny" style="margin-top:6px">Saved on this phone · included in exports</div></div>
+    <div class="foot tiny">Works offline · data stays on this phone</div>`;
+  return h;
+}
+
+/* ---------- wiring ---------- */
+function wire(st){
+  const A = app();
+  A.querySelectorAll('[data-ck]').forEach(i => i.onchange = () => { i.checked ? S.checks[i.dataset.ck] = 1 : delete S.checks[i.dataset.ck]; save(); });
+  A.querySelectorAll('[data-step]').forEach(el => el.addEventListener('click', ev => { if (ev.target.closest('label,button,input')) return; openStep(el.dataset.step); }));
+  A.querySelectorAll('[data-go]').forEach(el => el.onclick = () => go(el.dataset.go));
+  A.querySelectorAll('[data-day]').forEach(el => el.onclick = () => { viewDay = el.dataset.day; safeRender(); });
+  A.querySelectorAll('[data-day-m]').forEach(el => el.onclick = () => { tab = 'day'; viewDay = el.dataset.dayM; safeRender(); scrollTo(0, 0); });
+  A.querySelectorAll('[data-exp]').forEach(el => el.onclick = () => openExpense(S.expenses.find(e => e.id === el.dataset.exp)));
+  A.querySelectorAll('[data-taxi]').forEach(el => el.onclick = () => showTaxi(HOTELS[+el.dataset.taxi]));
+  A.querySelectorAll('[data-pv]').forEach(el => el.onclick = () => {
+    const v = el.dataset.pv;
+    if (v === 'off') setPreview(null);
+    else if (v === 'step'){ const L = visible(), n = L.find(x => x.ms > preview); setPreview(n ? n.ms : preview + H); }
+    else setPreview(preview + (+v) * MIN);
+    safeRender();
+  });
+  A.querySelectorAll('[data-act]').forEach(el => el.onclick = () => act(el.dataset.act, st));
+  const df = $('#dayFilter'); if (df) df.onchange = () => { dayFilter = df.value; safeRender(); };
+  const cv = $('#cvIn'); if (cv) cv.oninput = () => { const v = parseFloat(cv.value.replace(/,/g, '')); $('#cvOut').textContent = isFinite(v) ? fmt(toV(v, 'JPY'), 'VND') : '— ₫'; };
+  const nt = $('#notes'); if (nt) nt.oninput = () => { S.notes = nt.value; save(); };
+  const dc = $('#dchips .on'); if (dc) dc.scrollIntoView({inline:'center', block:'nearest'});
+}
+function act(a, st){
+  if (a === 'auto'){ S.pin = null; save(); safeRender(); toast('Following the clock again'); }
+  else if (a === 'advance'){ if (st.next){ S.pin = st.next.id; save(); safeRender(); scrollTo({top:0, behavior:'smooth'}); } }
+  else if (a === 'pickday'){ tab = 'day'; viewDay = st.cur ? st.cur.d : DAYS[0].d; safeRender(); toast('Tap the step you’re at, then “I’m here”'); }
+  else if (a === 'export') exportData();
+  else if (a === 'addstep') openStepEdit(null, viewDay);
+}
+function go(t){ tab = t; if (t === 'day') viewDay = null; safeRender(); scrollTo(0, 0); }
+
+/* ---------- sheets ---------- */
+let sheetOpen = false, lastBack = 0;
+const histOK = (() => { try { history.replaceState(history.state, ''); return true; } catch(e){ return false; } })();
+const ours = st => st && typeof st === 'object' && (st.jtd === 'sheet' || st.jtd === 'taxi');
+function pushLayer(kind){ if (!histOK) return; try { history.pushState({jtd:kind}, ''); } catch(e){} }
+function popLayer(){ if (histOK && ours(history.state)){ try { history.back(); } catch(e){} } }
+function openSheet(html, onWire){
+  $('#sheet').innerHTML = `<div class="grab"></div>` + html;
+  $('#sheet').classList.add('on'); $('#scrim').classList.add('on');
+  if (!sheetOpen){ sheetOpen = true; pushLayer('sheet'); }
+  onWire && onWire($('#sheet'));
+  $('#sheet').scrollTop = 0;
+}
+function closeSheet(fromPop){
+  if (!sheetOpen) return; sheetOpen = false;
+  $('#sheet').classList.remove('on'); $('#scrim').classList.remove('on');
+  if (!fromPop) popLayer();
+}
+function closeTaxi(fromPop){ const tx = $('.taxi'); if (!tx) return; tx.remove(); if (!fromPop) popLayer(); }
+function setupBackGuard(){
+  if (!histOK) return;
+  try {
+    if (ours(history.state)) history.replaceState({jtd:'guard'}, '');
+    else if (!history.state || history.state.jtd !== 'guard') history.pushState({jtd:'guard'}, '');
+  } catch(e){ return; }
+  addEventListener('popstate', ev => {
+    const st = ev.state;
+    if (st && st.jtd === 'guard'){ closeSheet(true); closeTaxi(true); return; }   // an overlay was closed
+    if (ours(st)) return;
+    // the guard itself was popped: user pressed / swiped Back on the main screen
+    if (sheetOpen || $('.taxi')){ closeSheet(true); closeTaxi(true); try { history.pushState({jtd:'guard'}, ''); } catch(e){} return; }
+    if (Date.now() - lastBack < 2500){ try { history.back(); } catch(e){} return; }
+    lastBack = Date.now();
+    try { history.pushState({jtd:'guard'}, ''); } catch(e){}
+    toast('Swipe back again to leave the dashboard');
+  });
+}
+
+function openStep(id){
+  const x = steps().find(s => s.id === id); if (!x) return;
+  const d = dayInfo(x.d);
+  openSheet(`<h3><span>${esc(x.ti)}</span><button class="iconbtn" data-close aria-label="Close" style="color:var(--ink)">${ic('x')}</button></h3>
+    <div class="tiny">${dayName(x.d).toUpperCase()} · ${x.t} ${ZONE_SHORT[x.z]}${x.edited && x.t !== x.t0 ? ' · planned ' + x.t0 : ''}</div>
+    <div style="margin-top:8px">${stepHead(x)}</div>${x.de ? `<p class="detail pre">${esc(x.de)}</p>` : ''}
+    <div id="ckwrap">${checklist(x)}</div>
+    <div class="row2">${x.hid ? '' : `<button class="btn primary wide" data-here>${ic('here')} I’m here now</button>`}
+      <button class="btn" data-edit>Edit</button></div>`, sh => {
+    sh.querySelector('[data-close]').onclick = () => closeSheet();
+    sh.querySelectorAll('[data-ck]').forEach(i => i.onchange = () => { i.checked ? S.checks[i.dataset.ck] = 1 : delete S.checks[i.dataset.ck]; save(); });
+    const hb = sh.querySelector('[data-here]'); if (hb) hb.onclick = () => { S.pin = x.id; save(); closeSheet(); tab = 'now'; safeRender(); scrollTo(0, 0); toast('Got it — following you from here'); };
+    sh.querySelector('[data-edit]').onclick = () => openStepEdit(x, x.d);
+  });
+}
+function openStepEdit(x, d){
+  const day = dayInfo(d), isNew = !x;
+  const zSel = isNew && (d === '11-06' || d === '11-14');
+  openSheet(`<h3>${isNew ? 'Add a step · ' + dayName(d) : 'Edit step'}</h3>
+    <div class="grid2"><label class="f"><span>Time${isNew ? '' : ' (' + ZONE_SHORT[x.z] + ')'}</span><input class="inp mono" type="time" id="eT" value="${isNew ? '12:00' : x.t}"></label>
+    ${zSel ? `<label class="f"><span>Time zone</span><select class="inp" id="eZ"><option value="9">Japan JST</option><option value="8">Shanghai CST</option><option value="7">Saigon ICT</option></select></label>` : '<span></span>'}</div>
+    <label class="f"><span>Title</span><input class="inp" id="eTi" value="${isNew ? '' : esc(x.ti)}" placeholder="e.g. Coffee break"></label>
+    <label class="f"><span>Details</span><textarea class="inp" id="eDe">${isNew ? '' : esc(x.de)}</textarea></label>
+    <div class="row2"><button class="btn primary wide" id="eSave">Save</button>
+    ${isNew ? '' : x.custom ? '<button class="btn danger" id="eDel">Delete</button>' : `<button class="btn" id="eHide">${x.hid ? 'Show again' : 'Skip step'}</button>${x.edited ? '<button class="btn danger" id="eReset">Reset</button>' : ''}`}</div>
+    ${isNew ? '' : `<div class="small" style="margin-top:10px">${x.custom ? 'Your own step.' : 'Changes are saved on this phone and included in exports.'}</div>`}`, sh => {
+    sh.querySelector('#eSave').onclick = () => {
+      const t = sh.querySelector('#eT').value, ti = sh.querySelector('#eTi').value.trim();
+      if (!/^\d\d:\d\d$/.test(t)) return toast('Pick a time');
+      if (isNew){
+        if (!ti) return toast('Add a title');
+        const z = zSel ? +sh.querySelector('#eZ').value : day.z;
+        S.custom.push({id:'c' + uid(), d, t, z, ti, de:sh.querySelector('#eDe').value.trim()});
+      } else if (x.custom){
+        Object.assign(S.custom.find(c => c.id === x.id), {t, ti:ti || x.ti, de:sh.querySelector('#eDe').value.trim()});
+      } else {
+        const e = S.edits[x.id] || {}; const raw = RAW_STEPS.find(r => r[0] + '_' + r[1] === x.id);
+        if (t !== raw[1]) e.t = t; else delete e.t;
+        if (ti && ti !== raw[7]) e.ti = ti; else delete e.ti;
+        const de = sh.querySelector('#eDe').value.trim(); if (de !== raw[8]) e.de = de; else delete e.de;
+        if (Object.keys(e).length) S.edits[x.id] = e; else delete S.edits[x.id];
+      }
+      save(); invalidate(); closeSheet(); viewDay = d; safeRender(); toast('Saved');
+    };
+    const del = sh.querySelector('#eDel'); if (del) del.onclick = () => { S.custom = S.custom.filter(c => c.id !== x.id); if (S.pin === x.id) S.pin = null; save(); invalidate(); closeSheet(); safeRender(); toast('Step deleted'); };
+    const hide = sh.querySelector('#eHide'); if (hide) hide.onclick = () => {
+      const e = S.edits[x.id] || {}; if (e.hid) delete e.hid; else e.hid = 1;
+      if (Object.keys(e).length) S.edits[x.id] = e; else delete S.edits[x.id];
+      if (S.pin === x.id) S.pin = null; save(); invalidate(); closeSheet(); safeRender(); toast(e.hid ? 'Step skipped' : 'Step restored');
+    };
+    const rs = sh.querySelector('#eReset'); if (rs) rs.onclick = () => { delete S.edits[x.id]; save(); invalidate(); closeSheet(); safeRender(); toast('Back to the original plan'); };
+  });
+}
+
+/* ----- expense sheet ----- */
+function openExpense(e){
+  const st = status(), today = activeDay(st), isNew = !e;
+  const f = e ? clone(e) : {a:'', c:today === 'pre' ? 'VND' : ZONE_CUR[zoneNow(st)], k:'food', d:today, n:''};
+  const dayOpts = [['pre', 'Before trip']].concat(DAYS.map(d => [d.d, dayName(d.d)]));
+  openSheet(`<h3>${isNew ? 'Add expense' : 'Edit expense'}<button class="iconbtn" data-close aria-label="Close" style="color:var(--ink)">${ic('x')}</button></h3>
+    <input class="inp amount" id="xA" inputmode="decimal" placeholder="0" value="${f.a}" autocomplete="off">
+    <div class="conv" id="xConv">&nbsp;</div>
+    <div class="f" style="margin-top:10px"><div class="seg" id="xC">${['JPY','CNY','VND'].map(c => `<button data-v="${c}" class="${c === f.c ? 'on' : ''}">${CUR_SYM[c]} ${c}</button>`).join('')}</div></div>
+    <div class="f"><span>Category</span><div class="seg" id="xK">${Object.keys(CATS).map(k => `<button data-v="${k}" class="${k === f.k ? 'on' : ''}">${ic(k)}${CATS[k]}</button>`).join('')}</div></div>
+    <label class="f"><span>Note</span><input class="inp" id="xN" value="${esc(f.n)}" placeholder="e.g. Ichiran ramen" maxlength="200"></label>
+    <label class="f"><span>Day</span><select class="inp" id="xD">${dayOpts.map(([v, l]) => `<option value="${v}" ${v === f.d ? 'selected' : ''}>${l}</option>`).join('')}</select></label>
+    <div class="row2"><button class="btn primary wide" id="xSave">${isNew ? 'Add' : 'Save'}</button>${isNew ? '' : '<button class="btn danger" id="xDel">Delete</button>'}</div>`, sh => {
+    const A = sh.querySelector('#xA');
+    const conv = () => { const v = parseFloat(A.value.replace(/,/g, '')); sh.querySelector('#xConv').textContent = isFinite(v) && v > 0 && f.c !== 'VND' ? '≈ ' + fmt(toV(v, f.c), 'VND') : f.c === 'VND' && v > 0 ? '≈ ' + fmt(fromV(v, 'JPY'), 'JPY') : '\u00a0'; };
+    A.oninput = conv; conv();
+    sh.querySelector('[data-close]').onclick = () => closeSheet();
+    const seg = (id, key) => sh.querySelectorAll('#' + id + ' button').forEach(b => b.onclick = () => { f[key] = b.dataset.v; sh.querySelectorAll('#' + id + ' button').forEach(x => x.classList.toggle('on', x === b)); conv(); });
+    seg('xC', 'c'); seg('xK', 'k');
+    sh.querySelector('#xSave').onclick = () => {
+      const v = parseFloat(A.value.replace(/,/g, ''));
+      if (!isFinite(v) || v <= 0) { A.focus(); return toast('Enter an amount'); }
+      if (v > 1e10) return toast('That amount looks too big');
+      const rec = {id:e ? e.id : uid(), a:Math.round(v * 100) / 100, c:f.c, k:f.k, d:sh.querySelector('#xD').value, n:sh.querySelector('#xN').value.trim().slice(0, 200), ts:e ? e.ts : nowMs()};
+      if (e) S.expenses[S.expenses.findIndex(x => x.id === e.id)] = rec; else S.expenses.push(rec);
+      save(); closeSheet(); safeRender(); toast((isNew ? 'Added ' : 'Saved ') + fmt(rec.a, rec.c));
+    };
+    const del = sh.querySelector('#xDel'); if (del) del.onclick = () => {
+      if (!confirm('Delete this expense?')) return;
+      S.expenses = S.expenses.filter(x => x.id !== e.id); save(); closeSheet(); safeRender(); toast('Deleted');
+    };
+    if (isNew) setTimeout(() => A.focus(), 260);
+  });
+}
+
+/* ----- settings ----- */
+function openSettings(){
+  const z = zoneNow(status()), pv = preview ?? epoch('11-06', '21:00', 9), t = inZone(pv, z);
+  const pvVal = `${t.y}-${pad(t.mo)}-${pad(t.d)}T${pad(t.h)}:${pad(t.mi)}`;
+  openSheet(`<h3>Settings<button class="iconbtn" data-close aria-label="Close" style="color:var(--ink)">${ic('x')}</button></h3>
+    <div class="f"><span>Backup</span><div class="row2" style="margin-top:0"><button class="btn primary wide" id="sExp">${ic('download')} Export</button><button class="btn wide" id="sImp">${ic('upload')} Import</button></div>
+      <div class="row2" style="margin-top:6px"><button class="btn wide" id="sShare">Share backup</button><button class="btn wide" id="sCsv">Expenses CSV</button></div>
+      <div class="small">${S.lastExport ? 'Last export ' + new Date(S.lastExport).toLocaleString() : 'Not exported yet'} · ${S.expenses.length} expenses</div>
+      <input type="file" id="sFile" accept=".json,.txt,application/json,text/plain" hidden></div>
+    <div class="hr"></div>
+    <div class="f"><span>Theme</span><div class="seg" id="sTh">${['random'].concat(THEMES).map(x => `<button data-v="${x}" class="${(S.themeLock || 'random') === x ? 'on' : ''}">${x[0].toUpperCase() + x.slice(1)}</button>`).join('')}</div>
+      <div class="small">Random picks earth, forest, sea or wind each time you open the file.</div></div>
+    <div class="f"><span>Performance</span><div class="seg" id="sLite"><button data-v="0" class="${S.lite ? '' : 'on'}">Animated</button><button data-v="1" class="${S.lite ? 'on' : ''}">Lite (no animation)</button></div>
+      <div class="small">Lite saves battery and is gentler on the phone. Switches on by itself if the page ever closes unexpectedly.</div></div>
+    <div class="hr"></div>
+    <div class="f"><span>Exchange rates (₫ per unit)</span><div class="grid2"><label class="f"><span>¥1 JPY</span><input class="inp mono" id="rJ" inputmode="decimal" value="${S.rates.JPY}"></label>
+      <label class="f"><span>CN¥1 CNY</span><input class="inp mono" id="rC" inputmode="decimal" value="${S.rates.CNY}"></label></div>
+      <label class="f"><span>Trip cap (₫)</span><input class="inp mono" id="rCap" inputmode="numeric" value="${S.cap}"></label></div>
+    <div class="f"><span>Daily budgets</span><select class="inp" id="bDay">${DAYS.map(d => `<option value="${d.d}">${dayName(d.d)} · ${esc(d.label)} (${d.cur})</option>`).join('')}</select>
+      <div class="grid2" id="bF" style="margin-top:6px"></div><button class="btn" id="bReset">Reset this day to plan</button></div>
+    <div class="f"><span>Prepaid items</span><div id="pp"></div><button class="btn" id="ppAdd">${ic('plus')} Add prepaid item</button></div>
+    <button class="btn primary wide" id="rSave" style="width:100%">Save rates &amp; budgets</button>
+    <div class="hr"></div>
+    <div class="f"><span>Preview time (test the dashboard)</span><div class="grid2"><input class="inp mono" type="datetime-local" id="pvT" value="${pvVal}" min="2026-10-01T00:00" max="2026-11-20T23:59">
+      <select class="inp" id="pvZ"><option value="9" ${z === 9 ? 'selected' : ''}>JST Japan</option><option value="8" ${z === 8 ? 'selected' : ''}>CST Shanghai</option><option value="7" ${z === 7 ? 'selected' : ''}>ICT Saigon</option></select></div>
+      <div class="row2" style="margin-top:6px"><button class="btn wide" id="pvOn">Start preview</button>${preview != null ? '<button class="btn wide" id="pvOff">Use real clock</button>' : ''}</div></div>
+    <div class="hr"></div>
+    <div class="f"><span>Danger zone</span><button class="btn danger" id="sWipe">Erase all data on this phone</button></div>
+    <div class="hr"></div>
+    <div class="f"><span>Diagnostics</span><div class="small">Saved data uses <b class="mono">${storageKB()} KB</b> of the ~5,000 KB this browser allows.</div>
+      ${diagList().length ? `<div class="small mono" style="margin-top:6px;white-space:pre-wrap;max-height:140px;overflow:auto;background:var(--soft);padding:8px;border-radius:10px">${diagList().map(d => esc(d.t.slice(5, 16).replace('T', ' ') + '  ' + d.m)).join('\n')}</div>
+      <div class="row2" style="margin-top:6px"><button class="btn wide" id="dgCopy">Copy report</button><button class="btn wide" id="dgClr">Clear log</button></div>` : '<div class="small">No problems logged.</div>'}</div>
+    <div class="tiny">Data lives in this browser only. Export regularly.</div>`, sh => {
+    sh.querySelector('[data-close]').onclick = () => closeSheet();
+    sh.querySelectorAll('#sLite button').forEach(b => b.onclick = () => { S.lite = b.dataset.v === '1'; save(); applyLite(); sh.querySelectorAll('#sLite button').forEach(x => x.classList.toggle('on', x === b)); });
+    const dc = sh.querySelector('#dgCopy'); if (dc) dc.onclick = async () => { const t = 'Japan dashboard report\n' + navigator.userAgent + '\n' + diagList().map(d => d.t + ' ' + d.m).join('\n'); try { await navigator.clipboard.writeText(t); toast('Report copied — paste it to Claude'); } catch(e){ toast('Couldn’t copy'); } };
+    const dl = sh.querySelector('#dgClr'); if (dl) dl.onclick = () => { try { localStorage.removeItem(DKEY); } catch(e){} closeSheet(); toast('Log cleared'); };
+    sh.querySelector('#sExp').onclick = exportData;
+    sh.querySelector('#sShare').onclick = shareData;
+    sh.querySelector('#sCsv').onclick = exportCSV;
+    const file = sh.querySelector('#sFile');
+    sh.querySelector('#sImp').onclick = () => file.click();
+    file.onchange = () => { const fl = file.files[0]; if (!fl) return; const r = new FileReader(); r.onload = () => importText(String(r.result)); r.onerror = () => toast('Couldn’t read that file'); r.readAsText(fl); file.value = ''; };
+    sh.querySelectorAll('#sTh button').forEach(b => b.onclick = () => {
+      const v = b.dataset.v; S.themeLock = v === 'random' ? null : v; theme = S.themeLock || THEMES[Math.floor(Math.random() * THEMES.length)]; save();
+      sh.querySelectorAll('#sTh button').forEach(x => x.classList.toggle('on', x === b)); safeRender();
+    });
+    // budgets editor
+    const work = {budgets:clone(S.budgets), prepaid:clone(prepaidList())};
+    const bDay = sh.querySelector('#bDay'), bF = sh.querySelector('#bF');
+    const drawB = () => { const d = bDay.value, b = Object.assign({}, dayInfo(d).b, work.budgets[d] || {}), cur = dayInfo(d).cur;
+      bF.innerHTML = BUDGET_CATS.map(c => `<label class="f" style="margin:0"><span>${CATS[c]} (${CUR_SYM[cur]})</span><input class="inp mono" data-bc="${c}" inputmode="numeric" value="${b[c] || 0}"></label>`).join('');
+      bF.querySelectorAll('[data-bc]').forEach(i => i.oninput = () => { const v = parseFloat(i.value); (work.budgets[d] = work.budgets[d] || {})[i.dataset.bc] = isFinite(v) && v >= 0 ? v : 0; });
+    };
+    const st0 = activeDay(status()); if (dayInfo(st0)) bDay.value = st0;
+    bDay.onchange = drawB; drawB();
+    sh.querySelector('#bReset').onclick = () => { delete work.budgets[bDay.value]; drawB(); };
+    const pp = sh.querySelector('#pp');
+    const drawP = () => { pp.innerHTML = work.prepaid.map((p, i) => `<div style="display:grid;grid-template-columns:1fr 104px 66px 30px;gap:6px;margin-bottom:6px;align-items:center">
+        <input class="inp" style="padding:8px;font-size:14px" data-pn="${i}" value="${esc(p.n)}"><input class="inp mono" style="padding:8px;font-size:14px" data-pa="${i}" inputmode="numeric" value="${p.a}">
+        <select class="inp" style="padding:8px 4px;font-size:13px" data-pc="${i}">${['VND','JPY','CNY'].map(c => `<option ${c === p.c ? 'selected' : ''}>${c}</option>`).join('')}</select>
+        <button class="btn" style="padding:6px" data-px="${i}" aria-label="Remove">${ic('x')}</button></div>`).join('');
+      pp.querySelectorAll('[data-pn]').forEach(i => i.oninput = () => work.prepaid[+i.dataset.pn].n = i.value);
+      pp.querySelectorAll('[data-pa]').forEach(i => i.oninput = () => { const v = parseFloat(i.value); work.prepaid[+i.dataset.pa].a = isFinite(v) && v >= 0 ? v : 0; });
+      pp.querySelectorAll('[data-pc]').forEach(i => i.onchange = () => work.prepaid[+i.dataset.pc].c = i.value);
+      pp.querySelectorAll('[data-px]').forEach(i => i.onclick = () => { work.prepaid.splice(+i.dataset.px, 1); drawP(); });
+    };
+    drawP();
+    sh.querySelector('#ppAdd').onclick = () => { work.prepaid.push({id:uid(), n:'New item', a:0, c:'VND'}); drawP(); };
+    sh.querySelector('#rSave').onclick = () => {
+      const j = parseFloat(sh.querySelector('#rJ').value), c = parseFloat(sh.querySelector('#rC').value), cap = parseFloat(sh.querySelector('#rCap').value);
+      if (!(j > 0) || !(c > 0) || !(cap > 0)) return toast('Rates and cap must be positive numbers');
+      S.rates.JPY = j; S.rates.CNY = c; S.cap = cap; S.budgets = work.budgets; S.prepaid = work.prepaid;
+      save(); closeSheet(); safeRender(); toast('Saved');
+    };
+    sh.querySelector('#pvOn').onclick = () => {
+      const v = sh.querySelector('#pvT').value, zz = +sh.querySelector('#pvZ').value;
+      const m = /^(\d{4})-(\d\d)-(\d\d)T(\d\d):(\d\d)/.exec(v); if (!m) return toast('Pick a date and time');
+      setPreview(Date.UTC(+m[1], +m[2] - 1, +m[3], +m[4] - zz, +m[5])); S.pin = null; save(); closeSheet(); tab = 'now'; safeRender(); scrollTo(0, 0);
+    };
+    const off = sh.querySelector('#pvOff'); if (off) off.onclick = () => { setPreview(null); closeSheet(); safeRender(); };
+    sh.querySelector('#sWipe').onclick = () => {
+      if (!confirm('Erase all expenses, ticks, edits and settings on this phone? Export first if unsure.')) return;
+      S = defaults(); save(); invalidate(); closeSheet(); safeRender(); toast('All data erased');
+    };
+  });
+}
+
+/* ---------- import / export ---------- */
+function payload(){ return {app:'japan-trip-dashboard', v:1, exported:new Date().toISOString(), data:S}; }
+function stamp(){ const d = new Date(); return `${d.getFullYear()}${pad(d.getMonth() + 1)}${pad(d.getDate())}-${pad(d.getHours())}${pad(d.getMinutes())}`; }
+function markExported(){ S.lastExport = Date.now(); S.exportedCount = S.expenses.length; save(); }
+function download(text, name, type){
+  try {
+    const url = URL.createObjectURL(new Blob([text], {type}));
+    const a = document.createElement('a'); a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 4000); return true;
+  } catch(e){ return false; }
+}
+function exportData(){
+  const txt = JSON.stringify(payload(), null, 1);
+  if (download(txt, `japan-trip-backup-${stamp()}.json`, 'application/json')){ markExported(); toast('Backup saved to Downloads'); safeRender(); }
+  else copyFallback(txt);
+}
+async function shareData(){
+  const txt = JSON.stringify(payload());
+  const file = new File([txt], `japan-trip-backup-${stamp()}.json`, {type:'application/json'});
+  try {
+    if (navigator.canShare && navigator.canShare({files:[file]})){ await navigator.share({files:[file], title:'Japan trip backup'}); markExported(); toast('Shared'); return; }
+  } catch(e){ if (e && e.name === 'AbortError') return; }
+  copyFallback(txt);
+}
+function copyFallback(txt){
+  openSheet(`<h3>Copy your backup</h3><p class="small">Downloading isn’t available here. Copy this text and keep it in Notes or send it to yourself.</p>
+    <textarea class="inp mono" id="cpT" style="min-height:180px;font-size:12px" readonly>${esc(txt)}</textarea><div class="row2"><button class="btn primary wide" id="cpB">Copy</button></div>`, sh => {
+    sh.querySelector('#cpB').onclick = async () => {
+      const ta = sh.querySelector('#cpT');
+      try { await navigator.clipboard.writeText(txt); } catch(e){ ta.select(); document.execCommand('copy'); }
+      markExported(); toast('Copied');
+    };
+  });
+}
+function exportCSV(){
+  const rows = [['date_logged','trip_day','category','note','amount','currency','amount_vnd']].concat(
+    S.expenses.slice().sort((a, b) => a.ts - b.ts).map(e => [new Date(e.ts).toISOString(), e.d === 'pre' ? 'before trip' : '2026-' + e.d, e.k, e.n, e.a, e.c, Math.round(toV(e.a, e.c))]));
+  const csv = '\ufeff' + rows.map(r => r.map(v => { v = String(v); return /[",\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; }).join(',')).join('\n');
+  download(csv, `japan-trip-expenses-${stamp()}.csv`, 'text/csv') ? toast('CSV saved to Downloads') : toast('Couldn’t download here');
+}
+function importText(txt){
+  let obj; try { obj = JSON.parse(txt); } catch(e){ return toast('That file isn’t a backup (not valid JSON)'); }
+  const data = obj && obj.app === 'japan-trip-dashboard' ? obj.data : (obj && Array.isArray(obj.expenses) ? obj : null);
+  if (!data) return toast('That file isn’t a Japan trip backup');
+  const inc = sanitize(data), when = obj.exported ? new Date(obj.exported).toLocaleString() : 'unknown date';
+  openSheet(`<h3>Import backup</h3><p>Backup from <b>${esc(when)}</b> with <b>${inc.expenses.length}</b> expenses, ${Object.keys(inc.edits).length + inc.custom.length} step edits.</p>
+    <p class="small">This phone has ${S.expenses.length} expenses now.</p>
+    <div class="row2"><button class="btn primary wide" id="imM">Merge</button><button class="btn danger wide" id="imR">Replace everything</button></div>
+    <p class="small" style="margin-top:10px">Merge keeps everything on this phone and adds anything new from the backup. Replace makes this phone match the backup exactly.</p>`, sh => {
+    sh.querySelector('#imR').onclick = () => { S = inc; save(); invalidate(); closeSheet(); safeRender(); toast('Backup restored'); };
+    sh.querySelector('#imM').onclick = () => {
+      const have = new Set(S.expenses.map(e => e.id)); let added = 0;
+      inc.expenses.forEach(e => { if (!have.has(e.id)){ S.expenses.push(e); added++; } });
+      Object.assign(S.checks, inc.checks);
+      for (const k in inc.edits) if (!S.edits[k]) S.edits[k] = inc.edits[k];
+      const ch = new Set(S.custom.map(c => c.id)); inc.custom.forEach(c => { if (!ch.has(c.id)) S.custom.push(c); });
+      if (!S.notes && inc.notes) S.notes = inc.notes; else if (inc.notes && !S.notes.includes(inc.notes)) S.notes += '\n\n' + inc.notes;
+      save(); invalidate(); closeSheet(); safeRender(); toast(`Merged · ${added} new expense${added === 1 ? '' : 's'}`);
+    };
+  });
+}
+
+/* ---------- taxi + toast ---------- */
+function showTaxi(h){
+  const el = document.createElement('div'); el.className = 'taxi'; el.setAttribute('role', 'dialog');
+  el.innerHTML = `<div class="h">この住所までお願いします</div><div class="j">${esc(h.n)}<br>${esc(h.ja)}</div><div class="e">${esc(h.en)}${h.tel ? '<br>☎ ' + esc(h.tel) : ''}</div><div class="e" style="margin-top:30px;font-size:13px">Tap anywhere to close</div>`;
+  el.onclick = () => closeTaxi();
+  pushLayer('taxi');
+  document.body.appendChild(el);
+}
+let tt; function toast(m){ let t = $('.toast'); if (!t){ t = document.createElement('div'); t.className = 'toast'; t.setAttribute('role', 'status'); document.body.appendChild(t); } t.textContent = m; clearTimeout(tt); tt = setTimeout(() => t.remove(), 2600); }
+
+/* ---------- health ---------- */
+const DKEY = 'jtd.diag', LKEY = 'jtd.life';
+function diag(msg){
+  try { const a = JSON.parse(localStorage.getItem(DKEY) || '[]'); a.unshift({t:new Date().toISOString(), m:String(msg).slice(0, 300)}); localStorage.setItem(DKEY, JSON.stringify(a.slice(0, 12))); } catch(e){}
+}
+function diagList(){ try { return JSON.parse(localStorage.getItem(DKEY) || '[]'); } catch(e){ return []; } }
+function life(vis){ try { localStorage.setItem(LKEY, JSON.stringify({vis:vis ? 1 : 0, t:Date.now()})); } catch(e){} }
+let crashNote = false;
+function checkLastSession(){
+  let l = null; try { l = JSON.parse(localStorage.getItem(LKEY) || 'null'); } catch(e){}
+  if (l && l.vis === 1 && Date.now() - l.t < 15 * MIN){
+    diag('Previous session ended while open (last seen ' + new Date(l.t).toLocaleTimeString() + ')');
+    if (!S.lite){ S.lite = true; save(); crashNote = true; }
+  }
+}
+function applyLite(){ document.documentElement.classList.toggle('lite', !!S.lite); }
+function storageKB(){ let n = 0; try { for (let i = 0; i < localStorage.length; i++){ const k = localStorage.key(i); n += k.length + (localStorage.getItem(k) || '').length; } } catch(e){} return (n * 2 / 1024).toFixed(1); }
+addEventListener('error', e => { diag('Error: ' + (e.message || e) + (e.lineno ? ' @' + e.lineno : '')); });
+addEventListener('unhandledrejection', e => { diag('Promise: ' + (e.reason && e.reason.message || e.reason)); });
+function safeRender(){
+  try { render(); }
+  catch(err){
+    diag('Render failed: ' + (err && err.message || err));
+    app().innerHTML = `<div class="banner err" style="margin-top:16px">Something went wrong drawing this screen. Your data is safe.</div>
+      <div class="row2"><button class="btn primary wide" id="rcExp">Export backup</button><button class="btn wide" id="rcFix">Back to clock + Now</button></div>`;
+    $('#rcExp').onclick = exportData;
+    $('#rcFix').onclick = () => { S.pin = null; setPreview(null); tab = 'now'; save(); invalidate(); safeRender(); };
+  }
+}
+
+/* ---------- boot ---------- */
+function boot(){
+  checkLastSession(); applyLite();
+  $('#hdr').innerHTML = '<div id="scn"></div><div id="hud"></div>';
+  $('#tabs').innerHTML = `<div class="in">
+    <button class="tab" data-t="now">${ic('now')}Now</button><button class="tab" data-t="day">${ic('day')}Days</button>
+    <button class="fab" id="fab" aria-label="Add expense">${ic('plus')}</button>
+    <button class="tab" data-t="money">${ic('money')}Budget</button><button class="tab" data-t="info">${ic('info')}Info</button></div>`;
+  document.querySelectorAll('.tab').forEach(b => b.onclick = () => go(b.dataset.t));
+  $('#fab').onclick = () => openExpense(null);
+  $('#scrim').onclick = () => closeSheet();
+  addEventListener('keydown', e => { if (e.key === 'Escape') closeSheet(); });
+  setupBackGuard();
+  safeRender(); life(true);
+  if (crashNote) setTimeout(() => toast('It closed unexpectedly last time — Lite mode is on (Settings to change)'), 600);
+  setInterval(() => {
+    if (document.visibilityState !== 'visible') return;
+    life(true);
+    const ae = document.activeElement;
+    if (!sheetOpen && !(ae && ae.matches && ae.matches('input,textarea,select'))) safeRender();
+  }, 30e3);
+  document.addEventListener('visibilitychange', () => {
+    const vis = document.visibilityState === 'visible';
+    document.documentElement.classList.toggle('paused', !vis);
+    life(vis);
+    if (vis && !sheetOpen) safeRender();
+  });
+  addEventListener('pagehide', () => life(false));
+  addEventListener('storage', e => { if (e.key === KEY){ S = load(); invalidate(); applyLite(); safeRender(); } });
+}
+boot();
+
+</script>
+</body>
+</html>

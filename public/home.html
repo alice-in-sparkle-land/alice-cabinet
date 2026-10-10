@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#EBC9A0">
+<meta name="description" content="Alice’s Cabinet: a small cabinet of curious tools.">
+<title>Alice’s Cabinet</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23C8452C'/%3E%3Ctext x='32' y='45' font-size='36' text-anchor='middle' fill='%23FFF6EC' font-family='serif'%3E%E9%8D%B5%3C/text%3E%3C/svg%3E">
+<style>
+:root{--serif:"Noto Serif",Georgia,serif;--sans:system-ui,Roboto,"Segoe UI",sans-serif;--mono:ui-monospace,"Roboto Mono",monospace;--bg:#F7F0E6;--ac:#B0532A;--ink:#1E2733;--mut:#646A71;color-scheme:light}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 var(--sans);min-height:100vh;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+a:focus-visible{outline:2px solid var(--ac);outline-offset:3px;border-radius:14px}
+.hd{position:relative;height:200px;overflow:hidden;color:#1E2733}
+.hd img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.hd.dark{color:#fff}.hd.dark .ttl,.hd.dark .sub,.hd.dark .clock{text-shadow:0 1px 6px rgba(0,0,0,.35)}
+.hin{position:absolute;left:16px;right:16px;top:calc(26px + env(safe-area-inset-top,0px));display:flex;align-items:center;gap:12px;max-width:560px;margin:0 auto}
+.key{width:42px;height:42px;border-radius:9px;background:#C8452C;color:#FFF6EC;display:grid;place-items:center;transform:rotate(-4deg);font:600 22px/1 var(--serif);flex:none;box-shadow:0 2px 6px rgba(120,30,10,.25)}
+.ttl{font:600 25px/1.15 var(--serif);letter-spacing:.3px}
+.sub{font-size:13px;opacity:.85}
+.clock{margin-left:auto;font:500 28px/1 var(--mono);letter-spacing:-.5px}
+.wrap{position:relative;margin:-36px auto 0;padding:0 14px 28px;max-width:560px}
+.cab{background:#EBDDC6;border:1px solid #D7C3A3;border-radius:22px;padding:12px;box-shadow:0 10px 24px -16px rgba(80,50,20,.5)}
+.cabt{font-size:12px;letter-spacing:.8px;text-transform:uppercase;font-weight:700;color:#7A5A3A;text-align:center;padding:2px 0 10px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.dr{position:relative;display:block;background:#FFFDF8;border:1px solid #E4D6BE;border-radius:14px;padding:14px;min-height:190px;transition:transform .15s}
+.dr:active{transform:scale(.98)}
+.st{width:54px;height:54px;border-radius:11px;color:#FFF6EC;display:grid;place-items:center;font:600 28px/1 var(--serif);transform:rotate(-3deg)}
+.nm{font:600 18px/1.25 var(--serif);margin-top:12px}
+.ds{font-size:13px;color:var(--mut);line-height:1.35;margin-top:2px}
+.lk{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--mut);margin-top:8px}
+.lk svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.knob{position:absolute;right:12px;top:14px;width:12px;height:12px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#F2D58A,#B8892E);box-shadow:0 1px 2px rgba(0,0,0,.3)}
+.dr.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:transparent;border-style:dashed;border-color:#CDB896;color:#8E7A5C;font-size:13px}
+.dr.empty b{font-size:28px;font-weight:400;color:#B9A27E;line-height:1}
+.quote{text-align:center;font:italic 16px/1.5 var(--serif);color:#5d6470;margin:26px 20px 6px}
+.qby{text-align:center;font-size:12px;color:#8A8F95;margin:0 0 22px}
+.own{text-align:center;font-size:12.5px;color:#8A8F95}
+.own a{color:var(--ac);font-weight:600;text-decoration:underline;text-underline-offset:2px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header class="hd" id="hd"><img id="scene" alt=""><div class="hin"><div class="key" aria-hidden="true">鍵</div><div><div class="ttl">Alice’s Cabinet</div><div class="sub" id="date"></div></div><div class="clock" id="clock"></div></div></header>
+<main class="wrap">
+  <section class="cab" aria-label="Tools">
+    <div class="cabt">Alice’s Cabinet</div>
+    <div class="grid">
+      <a class="dr" href="https://kokoro.alicecabinet.com/"><span class="knob"></span><span class="st" style="background:#C8452C" aria-hidden="true">心</span><div class="nm">Kokoro</div><div class="ds">People, your map and Becoming</div><div class="lk"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Sign-in needed</div></a>
+      <a class="dr" href="https://theway.alicecabinet.com/"><span class="knob"></span><span class="st" style="background:#3B6948" aria-hidden="true">道</span><div class="nm">The Way</div><div class="ds">Goals, systems and budget</div><div class="lk"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Sign-in needed</div></a>
+      <a class="dr" href="https://trip.alicecabinet.com/"><span class="knob"></span><span class="st" style="background:#B0532A" aria-hidden="true">旅</span><div class="nm">Japan trip</div><div class="ds">Day-by-day plan and budget</div><div class="lk"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Sign-in needed</div></a>
+      <div class="dr empty" aria-label="An empty drawer"><b>+</b>An empty drawer for the next tool</div>
+    </div>
+  </section>
+  <p class="quote">“Curiouser and curiouser.”</p>
+  <p class="qby">Lewis Carroll, Alice’s Adventures in Wonderland</p>
+  <p class="own"><a href="https://one.dash.cloudflare.com/" rel="noopener">Manage access</a></p>
+</main>
+<script>
+'use strict';
+(function () {
+/* ===== scene.js — the misty-hills header, drawn once per theme and time of day ===== */
+const THEMES = {
+  earth: { sky: ['#EBC9A0', '#F7E9D4'], r: ['#E2B88E', '#CF946A', '#B0704C', '#7E4A33'], sun: '#C8452C', ac: '#B0532A', ac2: '#C99230', bg: '#F7F0E6', name: 'Earth' },
+  forest: { sky: ['#C9DFCB', '#EFF4E7'], r: ['#AECBA8', '#84AC82', '#5C8C61', '#3B6948'], sun: '#FFFDF4', ac: '#3B7A4D', ac2: '#C6613A', bg: '#F2F4EC', name: 'Forest' },
+  sea: { sky: ['#B8DCE8', '#EDF6F4'], r: ['#A3CEDC', '#74B2C8', '#4690B0', '#256A8C'], sun: '#FFFFFF', ac: '#1D7898', ac2: '#E0784E', bg: '#EEF4F4', name: 'Sea' },
+  wind: { sky: ['#CFDBF0', '#F4F2F8'], r: ['#C3CEE6', '#A6B4D7', '#8894C2', '#6772A6'], sun: '#FFFFFF', ac: '#4569B3', ac2: '#D9A32E', bg: '#F1F2F7', name: 'Wind' }
+};
+const PHASES = {
+  dawn: { sky: ['#EDB9AC', '#FAE3CF'], tint: '#F2B3A0', k: 0.22 },
+  dusk: { sky: ['#D98A7E', '#F4C9A6'], tint: '#6A3E62', k: 0.42 },
+  night: { sky: ['#16203D', '#34406A'], tint: '#111933', k: 0.66 }
+};
+function phaseOf(d) { const h = d.getHours(); if (h >= 5 && h < 8) return 'dawn'; if (h >= 8 && h < 16) return 'day'; if (h >= 16 && h < 19) return 'dusk'; return 'night'; }
+function rng(a) { return function () { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+function ridge(yBase, amp, seed, freq, W = 800, H = 440) {
+  const r = rng(seed), p = [r() * 6, r() * 6];
+  let d = `M0 ${H} L`;
+  for (let x = 0; x <= W; x += 5) {
+    const y = yBase - amp * (0.7 * Math.sin(x * freq + p[0]) + 0.3 * Math.sin(x * freq * 2.1 + p[1]));
+    d += `${x} ${y.toFixed(1)} L`;
+  }
+  return d + `${W} ${H}Z`;
+}
+function mixHex(a, b, k) {
+  const pa = parseInt(a.slice(1), 16), pb = parseInt(b.slice(1), 16);
+  const ch = s => [(s >> 16) & 255, (s >> 8) & 255, s & 255];
+  const A = ch(pa), B = ch(pb);
+  return '#' + A.map((v, i) => Math.round(v + (B[i] - v) * k).toString(16).padStart(2, '0')).join('');
+}
+const RIDGES = [[246, 26, .0085], [286, 22, .011], [326, 18, .014], [366, 14, .018]];
+let SCENE_KEY = '', SCENE_URL = '';
+function sceneURL(theme, phase, preview) {
+  const key = theme + '|' + phase;
+  if (!preview && key === SCENE_KEY) return SCENE_URL;
+  const t = THEMES[theme], P = PHASES[phase];
+  const sky = P ? P.sky : t.sky;
+  const rc = t.r.map(c => P ? mixHex(c, P.tint, P.k) : c);
+  let s = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 440" preserveAspectRatio="xMidYMax slice">` +
+    `<defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${sky[0]}"/><stop offset="1" stop-color="${sky[1]}"/></linearGradient>` +
+    `<linearGradient id="m" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="${phase === 'night' ? .12 : .35}"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient></defs>` +
+    `<rect width="800" height="440" fill="url(#g)"/>`;
+  if (phase === 'night') {
+    const r = rng(7);
+    for (let i = 0; i < 46; i++) s += `<circle cx="${(r() * 800).toFixed(0)}" cy="${(110 + r() * 150).toFixed(0)}" r="${(0.6 + r() * 1.3).toFixed(1)}" fill="#fff" opacity="${(0.35 + r() * 0.55).toFixed(2)}"/>`;
+    s += `<circle cx="430" cy="205" r="26" fill="#F4F1E4"/><circle cx="441" cy="198" r="24" fill="${sky[0]}"/>`;
+  } else {
+    const sun = phase === 'dusk' || phase === 'dawn' ? (theme === 'earth' ? t.sun : '#FFF4E4') : t.sun;
+    s += `<circle cx="430" cy="205" r="30" fill="${sun}"/>`;
+    s += `<path d="M486 258 q7 -5 14 0 q7 -5 14 0" stroke="#3B4654" stroke-width="2" fill="none" opacity=".45"/><path d="M520 244 q5 -4 10 0 q5 -4 10 0" stroke="#3B4654" stroke-width="2" fill="none" opacity=".4"/>`;
+  }
+  RIDGES.forEach((q, i) => {
+    s += `<path d="${ridge(q[0], q[1], 11 + i * 7, q[2])}" fill="${rc[i]}"/>`;
+    if (i < 3) s += `<rect x="0" y="${q[0] + 4}" width="800" height="44" fill="url(#m)"/>`;
+  });
+  s += '</svg>';
+  const url = 'data:image/svg+xml,' + encodeURIComponent(s);
+  if (!preview) { SCENE_KEY = key; SCENE_URL = url; }
+  return url;
+}
+
+  var keys = Object.keys(THEMES), last = '';
+  try { last = localStorage.getItem('cab.theme') || ''; } catch (e) { /* storage blocked */ }
+  var pool = keys.filter(function (k) { return k !== last; });
+  var theme = pool[Math.floor(Math.random() * pool.length)];
+  try { localStorage.setItem('cab.theme', theme); } catch (e) { /* ignore */ }
+  var T = THEMES[theme], root = document.documentElement.style;
+  root.setProperty('--ac', T.ac); root.setProperty('--bg', T.bg);
+  var meta = document.querySelector('meta[name=theme-color]'); if (meta) meta.content = T.sky[0];
+  var phase = '';
+  function paint() {
+    var now = new Date(), p = phaseOf(now);
+    if (p !== phase) {
+      phase = p;
+      document.getElementById('scene').src = sceneURL(theme, p);
+      document.getElementById('hd').classList.toggle('dark', p === 'dusk' || p === 'night');
+    }
+    document.getElementById('clock').textContent = now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+    document.getElementById('date').textContent = now.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
+  }
+  paint();
+  setInterval(function () { if (!document.hidden) paint(); }, 15000);
+  document.addEventListener('visibilitychange', function () { if (!document.hidden) paint(); });
+  if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('/sw.js').catch(function () {});
+})();
+</script>
+</body>
+</html>

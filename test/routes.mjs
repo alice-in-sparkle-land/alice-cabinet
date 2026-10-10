@@ -1,0 +1,23 @@
+// Checks the Worker's address routing with a fake ASSETS store built from /public.
+import fs from 'node:fs'; import path from 'node:path';
+import worker from '../worker.js';
+const PUB = path.resolve('public');
+const ASSETS = { async fetch(req) { const u = new URL(req.url); const f = path.join(PUB, u.pathname);
+  if (!f.startsWith(PUB) || !fs.existsSync(f)) return new Response('nf', { status: 404 });
+  return new Response(fs.readFileSync(f), { headers: { 'Content-Type': 'text/html' } }); } };
+let fails = 0; const ok = (n, c) => { console.log((c ? 'ok  ' : 'FAIL') + ' ' + n); if (!c) fails++; };
+const get = async u => worker.fetch(new Request(u), { ASSETS });
+let r = await get('https://alicecabinet.com/'); let t = await r.text();
+ok('home on the bare domain', r.status === 200 && t.includes('Alice’s Cabinet'));
+ok('home is not cached forever', r.headers.get('cache-control') === 'no-cache');
+r = await get('https://trip.alicecabinet.com/'); t = await r.text();
+ok('trip address shows the Japan dashboard', t.includes('Japan Trip Dashboard') && t.includes("register('/sw.js')"));
+r = await get('https://www.alicecabinet.com/x?y=1');
+ok('www redirects to the bare domain', r.status === 301 && r.headers.get('location') === 'https://alicecabinet.com/x?y=1');
+r = await get('https://alice-cabinet.someone.workers.dev/'); t = await r.text();
+ok('workers.dev shows home', t.includes('Alice’s Cabinet'));
+r = await get('https://alicecabinet.com/sw.js');
+ok('sw.js served', r.status === 200);
+r = await get('https://alicecabinet.com/../worker.js');
+ok('no files outside public', r.status === 404 || !(await r.text()).includes('export default'));
+process.exit(fails ? 1 : 0);

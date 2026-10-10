@@ -1,0 +1,12 @@
+{
+  // Alice's Cabinet: the home page and the Japan trip, both static
+  "name": "alice-cabinet",
+  "main": "worker.js",
+  "compatibility_date": "2025-09-01",
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS",
+    "html_handling": "none",
+    "not_found_handling": "none"
+  }
+}
