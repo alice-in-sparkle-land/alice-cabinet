@@ -35,6 +35,7 @@ a:focus-visible{outline:2px solid var(--ac);outline-offset:3px;border-radius:14p
 .lk svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .knob{position:absolute;right:12px;top:14px;width:12px;height:12px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#F2D58A,#B8892E);box-shadow:0 1px 2px rgba(0,0,0,.3)}
 .dr.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:transparent;border-style:dashed;border-color:#CDB896;color:#8E7A5C;font-size:13px}
+.dr.empty.wide{grid-column:1/-1;min-height:74px;flex-direction:row;gap:10px}
 .dr.empty b{font-size:28px;font-weight:400;color:#B9A27E;line-height:1}
 .quote{text-align:center;font:italic 16px/1.5 var(--serif);color:#5d6470;margin:26px 20px 6px}
 .qby{text-align:center;font-size:12px;color:#8A8F95;margin:0 0 22px}
@@ -52,7 +53,8 @@ a:focus-visible{outline:2px solid var(--ac);outline-offset:3px;border-radius:14p
       <a class="dr" href="https://kokoro.alicecabinet.com/"><span class="knob"></span><span class="st" style="background:#C8452C" aria-hidden="true">心</span><div class="nm">Kokoro</div><div class="ds">People, your map and Becoming</div><div class="lk"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Sign-in needed</div></a>
       <a class="dr" href="https://theway.alicecabinet.com/"><span class="knob"></span><span class="st" style="background:#3B6948" aria-hidden="true">道</span><div class="nm">The Way</div><div class="ds">Goals, systems and budget</div><div class="lk"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Sign-in needed</div></a>
       <a class="dr" href="https://trip.alicecabinet.com/"><span class="knob"></span><span class="st" style="background:#B0532A" aria-hidden="true">旅</span><div class="nm">Japan trip</div><div class="ds">Day-by-day plan and budget</div><div class="lk"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Sign-in needed</div></a>
-      <div class="dr empty" aria-label="An empty drawer"><b>+</b>An empty drawer for the next tool</div>
+      <a class="dr" href="https://studio.alicecabinet.com/"><span class="knob"></span><span class="st" style="background:#256A8C" aria-hidden="true">講</span><div class="nm">Lesson Studio</div><div class="ds">Plan, slides, recording and video</div><div class="lk"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Sign-in needed</div></a>
+      <div class="dr empty wide" aria-label="An empty drawer"><b>+</b>An empty drawer for the next tool</div>
     </div>
   </section>
   <p class="quote">“Curiouser and curiouser.”</p>

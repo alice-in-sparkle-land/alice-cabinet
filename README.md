@@ -6,6 +6,7 @@
 The other drawers are separate sites with their own repositories:
 - Kokoro: `brain-rewire`, at `kokoro.alicecabinet.com`
 - The Way: `life-tools`, at `theway.alicecabinet.com`
+- Lesson Studio: `studio`, at `studio.alicecabinet.com`
 
 The tools are locked with Cloudflare Access. The home page stays public.
 
